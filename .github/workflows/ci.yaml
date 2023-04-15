@@ -29,6 +29,6 @@ jobs:
         run: make install
         working-directory: e2e
 
-      - name: Run unit test and install
+      - name: Run e2e
         run: make clean test_compile run
         working-directory: e2e
