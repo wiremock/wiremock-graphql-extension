@@ -1,11 +1,10 @@
-import com.github.tomakehurst.wiremock.extension.Parameters
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import com.github.tomakehurst.wiremock.http.Request
+import com.nilwurtz.GraphqlBodyMatcher
 import io.mockk.every
 import io.mockk.mockk
-import org.junit.Ignore
 import org.junit.jupiter.api.Assertions.assertFalse
 
 class GraphqlBodyMatcherTest {
@@ -13,7 +12,6 @@ class GraphqlBodyMatcherTest {
     @DisplayName("graphql query exactly matched")
     fun testExactlyMatched() {
         val request = mockk<Request>()
-        val parameter = mockk<Parameters>()
         // language=json
         val query = """
             {
@@ -22,19 +20,15 @@ class GraphqlBodyMatcherTest {
         """.trimIndent()
 
         every { request.bodyAsString } returns query
-        every { parameter["body"] } returns query
-
-
-        val actual = GraphqlBodyMatcher().match(request, parameter)
+        val actual = GraphqlBodyMatcher(query).match(request, mockk())
         assertTrue(actual.isExactMatch)
     }
 
-    @Ignore
+
     @Test
     @DisplayName("graphql query not matched")
     fun testNotMatched() {
         val request = mockk<Request>()
-        val parameter = mockk<Parameters>()
         // language=json
         val query1 = """
             {
@@ -48,10 +42,8 @@ class GraphqlBodyMatcherTest {
         """.trimIndent()
 
         every { request.bodyAsString } returns query1
-        every { parameter["body"] } returns query2
 
-
-        val actual = GraphqlBodyMatcher().match(request, parameter)
+        val actual = GraphqlBodyMatcher(query2).match(request, mockk())
         assertFalse(actual.isExactMatch)
     }
 }
