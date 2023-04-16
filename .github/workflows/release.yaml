@@ -21,6 +21,7 @@ jobs:
           distribution: 'corretto'
 
       - name: Get Target version
+        working-directory: wiremock-graphql-extension
         id: version
         run: |-
           VERSION=$(mvn help:evaluate -Dexpression=project.version -B | grep -v '\[INFO\]')
