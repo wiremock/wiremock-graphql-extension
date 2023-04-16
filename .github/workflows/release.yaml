@@ -1,5 +1,4 @@
 name: Build and Release
-description: Build jar and release it to github release.
 
 on:
   workflow_dispatch:
