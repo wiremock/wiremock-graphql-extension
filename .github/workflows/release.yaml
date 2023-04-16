@@ -28,14 +28,14 @@ jobs:
           echo $VERSION
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
-#      - name: Build and package JAR
-#        run: mvn -f wiremock-graphql-extension clean package
-#
-#      - name: Create GitHub Release
-#        uses: softprops/action-gh-release@v1
-#        with:
-#          files: wiremock-graphql-extension/target/wiremock-graphql-extension-*.jar
-#          tag_name: v${{ steps.version.outputs.version }}
-#          name: Release v${{ steps.version.outputs.version }}
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build and package JAR
+        run: mvn -f wiremock-graphql-extension clean package
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: wiremock-graphql-extension/target/wiremock-graphql-extension-*.jar
+          tag_name: v${{ steps.version.outputs.version }}
+          name: Release v${{ steps.version.outputs.version }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
