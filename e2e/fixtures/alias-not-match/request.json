@@ -1,0 +1,3 @@
+{
+  "query": "{ main_hero: hero { name } }"
+}

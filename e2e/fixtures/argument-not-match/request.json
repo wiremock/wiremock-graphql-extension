@@ -1,0 +1,3 @@
+{
+  "query": "{ hero(episode: EMPIRE) { name } }"
+}

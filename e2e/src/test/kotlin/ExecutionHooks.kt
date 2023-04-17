@@ -4,6 +4,7 @@ import com.github.tomakehurst.wiremock.common.ConsoleNotifier
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
 import com.nilwurtz.GraphqlBodyMatcher
 import com.thoughtworks.gauge.AfterSuite
+import com.thoughtworks.gauge.BeforeScenario
 import com.thoughtworks.gauge.BeforeSuite
 import com.thoughtworks.gauge.datastore.SuiteDataStore
 
@@ -21,12 +22,19 @@ class ExecutionHooks {
                 Datastore.server(it);
                 it.start()
             }
-
     }
 
     @AfterSuite()
     fun tearDownSuite() {
         Datastore.server()?.shutdown()
+    }
+
+    @BeforeScenario()
+    fun setupScenario() {
+        Datastore.server()?.let {
+            it.resetMappings()
+            it.resetRequests()
+        }
     }
 }
 

@@ -4,9 +4,7 @@ import com.github.tomakehurst.wiremock.extension.Parameters
 import com.github.tomakehurst.wiremock.http.Request
 import com.github.tomakehurst.wiremock.matching.MatchResult
 import com.github.tomakehurst.wiremock.matching.RequestMatcherExtension
-import graphql.language.Document
-import graphql.language.OperationDefinition
-import graphql.language.SelectionSet
+import graphql.language.*
 import graphql.parser.Parser
 import org.json.JSONObject
 
@@ -55,10 +53,63 @@ class GraphqlBodyMatcher() : RequestMatcherExtension() {
 
     private fun normalizeOperationDefinition(operationDefinition: OperationDefinition): OperationDefinition {
         val operationBuilder = OperationDefinition.newOperationDefinition()
-        operationBuilder.selectionSet(
-            operationDefinition.selectionSet.selections.sortedBy { it.toString() }
-                .let { selections -> SelectionSet.newSelectionSet(selections).build() }
-        )
+
+        operationDefinition.selectionSet?.let { selectionSet ->
+            val normalizedSelectionSet = normalizeSelectionSet(selectionSet)
+            operationBuilder.selectionSet(normalizedSelectionSet)
+        }
+
         return operationBuilder.build()
+    }
+
+    private fun normalizeSelectionSet(selectionSet: SelectionSet): SelectionSet {
+        val selectionBuilder = SelectionSet.newSelectionSet()
+        val sortedSelections = selectionSet.selections.sortedBy { it.toString() }
+
+        sortedSelections.forEach { selection ->
+            when (selection) {
+                is Field -> {
+                    val normalizedField = normalizeField(selection)
+                    selectionBuilder.selection(normalizedField)
+                }
+                is InlineFragment -> {
+                    val normalizedInlineFragment = normalizeInlineFragment(selection)
+                    selectionBuilder.selection(normalizedInlineFragment)
+                }
+                is FragmentSpread -> {
+                    // Assuming FragmentSpread does not need to be normalized
+                    selectionBuilder.selection(selection)
+                }
+            }
+        }
+
+        return selectionBuilder.build()
+    }
+
+    private fun normalizeField(field: Field): Field {
+        val fieldBuilder = Field.newField()
+
+        fieldBuilder.name(field.name)
+        fieldBuilder.alias(field.alias)
+        fieldBuilder.arguments(field.arguments)
+
+        // If field has a selection set, normalize it
+        field.selectionSet?.let { selectionSet ->
+            val normalizedSelectionSet = normalizeSelectionSet(selectionSet)
+            fieldBuilder.selectionSet(normalizedSelectionSet)
+        }
+
+        return fieldBuilder.build()
+    }
+
+    private fun normalizeInlineFragment(inlineFragment: InlineFragment): InlineFragment {
+        val inlineFragmentBuilder = InlineFragment.newInlineFragment()
+
+        inlineFragment.typeCondition?.let { inlineFragmentBuilder.typeCondition(it) }
+
+        val normalizedSelectionSet = normalizeSelectionSet(inlineFragment.selectionSet)
+        inlineFragmentBuilder.selectionSet(normalizedSelectionSet)
+
+        return inlineFragmentBuilder.build()
     }
 }

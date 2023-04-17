@@ -24,7 +24,6 @@ class GraphqlBodyMatcherTest {
         assertTrue(actual.isExactMatch)
     }
 
-
     @Test
     @DisplayName("graphql query not matched")
     fun testNotMatched() {
@@ -45,5 +44,27 @@ class GraphqlBodyMatcherTest {
 
         val actual = GraphqlBodyMatcher(query2).match(request, mockk())
         assertFalse(actual.isExactMatch)
+    }
+
+    @Test
+    @DisplayName("graphql query not matched")
+    fun testMatchedDifferentOrder() {
+        val request = mockk<Request>()
+        // language=json
+        val query1 = """
+            {
+                "query": "{ hero { name friends }}"
+            }
+        """.trimIndent()
+        val query2 = """
+            {
+                "query": "{ hero { friends name }}"
+            }
+        """.trimIndent()
+
+        every { request.bodyAsString } returns query1
+
+        val actual = GraphqlBodyMatcher(query2).match(request, mockk())
+        assertTrue(actual.isExactMatch)
     }
 }

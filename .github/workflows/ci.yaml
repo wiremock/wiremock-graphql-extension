@@ -33,5 +33,5 @@ jobs:
         working-directory: e2e
 
       - name: Run e2e
-        run: make clean test_compile run
+        run: make clean test_compile run TAGS='!unimplemented'
         working-directory: e2e

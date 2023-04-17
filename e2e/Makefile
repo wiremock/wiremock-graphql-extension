@@ -12,4 +12,5 @@ test_compile:
 	mvn test-compile
 
 run:
-	mvn gauge:execute
+	mvn gauge:execute -Dtags="$(TAGS)"
+
