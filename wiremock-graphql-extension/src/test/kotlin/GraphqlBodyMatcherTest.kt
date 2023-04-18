@@ -2,7 +2,7 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import com.github.tomakehurst.wiremock.http.Request
-import com.nilwurtz.GraphqlBodyMatcher
+import io.github.nilwurtz.GraphqlBodyMatcher
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Assertions.assertFalse

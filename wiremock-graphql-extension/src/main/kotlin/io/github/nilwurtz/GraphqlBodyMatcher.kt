@@ -1,4 +1,4 @@
-package com.nilwurtz
+package io.github.nilwurtz
 
 import com.github.tomakehurst.wiremock.extension.Parameters
 import com.github.tomakehurst.wiremock.http.Request
