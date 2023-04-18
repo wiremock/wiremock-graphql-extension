@@ -6,7 +6,7 @@
 
     <artifactId>wiremock-graphql-extension</artifactId>
     <groupId>io.github.nilwurtz</groupId>
-    <version>0.1.0</version>
+    <version>0.1.1</version>
     <packaging>jar</packaging>
 
     <name>wiremock-graphql-extension</name>
@@ -15,6 +15,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <kotlin.code.style>official</kotlin.code.style>
         <kotlin.compiler.jvmTarget>17</kotlin.compiler.jvmTarget>
+        <gpg.skip>true</gpg.skip>
     </properties>
 
     <repositories>
@@ -112,7 +113,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-gpg-plugin</artifactId>
-                <version>3.0.1</version>
+                <version>1.6</version>
                 <executions>
                     <execution>
                         <id>sign-artifacts</id>
@@ -120,11 +121,13 @@
                         <goals>
                             <goal>sign</goal>
                         </goals>
+                        <!-- To make reference to the passphrase on settings.xml instead of GUI dialog -->
                         <configuration>
                             <gpgArguments>
                                 <arg>--pinentry-mode</arg>
                                 <arg>loopback</arg>
                             </gpgArguments>
+                            <skip>${gpg.skip}</skip>
                         </configuration>
                     </execution>
                 </executions>
