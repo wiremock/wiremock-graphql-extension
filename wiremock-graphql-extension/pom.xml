@@ -122,15 +122,15 @@
                             <goal>sign</goal>
                         </goals>
                         <!-- To make reference to the passphrase on settings.xml instead of GUI dialog -->
-                        <configuration>
-                            <gpgArguments>
-                                <arg>--pinentry-mode</arg>
-                                <arg>loopback</arg>
-                            </gpgArguments>
-                            <skip>${gpg.skip}</skip>
-                        </configuration>
                     </execution>
                 </executions>
+                <configuration>
+                    <gpgArguments>
+                        <arg>--pinentry-mode</arg>
+                        <arg>loopback</arg>
+                    </gpgArguments>
+                    <skip>${gpg.skip}</skip>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
