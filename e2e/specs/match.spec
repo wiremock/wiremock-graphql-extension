@@ -31,10 +31,24 @@
 * レスポンスステータスコードが"200"である
 
 ## 異なるフラグメント名で同じセットを使用したクエリの場合、マッチする
-tags: unimplemented
 * json<file:./fixtures/fragment-name-match/setup.json>を受け取って200を返すスタブを登録する
 * URL"/graphql"にボディ<file:./fixtures/fragment-name-match/request.json>で、POSTリクエストを送る
 * レスポンスステータスコードが"200"である
+
+## 同じフラグメント名で違うセットを使用したクエリの場合、マッチしない
+* json<file:./fixtures/fragment-set-not-match/setup.json>を受け取って200を返すスタブを登録する
+* URL"/graphql"にボディ<file:./fixtures/fragment-set-not-match/request.json>で、POSTリクエストを送る
+* レスポンスステータスコードが"404"である
+
+## 複数のフラグメントを含むクエリがマッチする
+* json<file:./fixtures/multiple-fragments-match/setup.json>を受け取って200を返すスタブを登録する
+* URL"/graphql"にボディ<file:./fixtures/multiple-fragments-match/request.json>で、POSTリクエストを送る
+* レスポンスステータスコードが"200"である
+
+## 複数のフラグメントを含むクエリでSetが違う場合マッチしない
+* json<file:./fixtures/multiple-fragments-not-match/setup.json>を受け取って200を返すスタブを登録する
+* URL"/graphql"にボディ<file:./fixtures/multiple-fragments-not-match/request.json>で、POSTリクエストを送る
+* レスポンスステータスコードが"404"である
 
 ## 同じ引数を持つクエリの場合、マッチする
 * json<file:./fixtures/argument-match/setup.json>を受け取って200を返すスタブを登録する

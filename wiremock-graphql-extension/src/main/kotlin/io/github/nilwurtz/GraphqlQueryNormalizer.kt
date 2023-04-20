@@ -6,10 +6,16 @@ object GraphqlQueryNormalizer {
     fun normalizeGraphqlDocument(document: Document): Document {
         val documentBuilder: Document.Builder = Document.newDocument()
         document.definitions.forEach { definition ->
-            if (definition is OperationDefinition) {
-                documentBuilder.definition(normalizeOperationDefinition(definition))
-            } else {
-                documentBuilder.definition(definition)
+            when (definition) {
+                is OperationDefinition -> {
+                    documentBuilder.definition(normalizeOperationDefinition(definition))
+                }
+                is FragmentDefinition -> {
+                    documentBuilder.definition(normalizeFragmentDefinition(definition))
+                }
+                else -> {
+                    documentBuilder.definition(definition)
+                }
             }
         }
         return documentBuilder.build()
@@ -26,32 +32,37 @@ object GraphqlQueryNormalizer {
         return operationBuilder.build()
     }
 
+    private fun normalizeFragmentDefinition(fragmentDefinition: FragmentDefinition): FragmentDefinition {
+        val fragmentDefinitionBuilder = FragmentDefinition.newFragmentDefinition()
+            .typeCondition(fragmentDefinition.typeCondition)
+
+        val normalizedSelectionSet = normalizeSelectionSet(fragmentDefinition.selectionSet)
+        fragmentDefinitionBuilder.selectionSet(normalizedSelectionSet)
+
+        return fragmentDefinitionBuilder.build()
+    }
+
     private fun normalizeSelectionSet(selectionSet: SelectionSet): SelectionSet {
         val selectionBuilder = SelectionSet.newSelectionSet()
-        val sortedSelections = selectionSet.selections.sortedBy { it.toString() }
 
-        sortedSelections.forEach { selection ->
+        val normalizedSelections = selectionSet.selections.map { selection ->
             when (selection) {
-                is Field -> {
-                    val normalizedField = normalizeField(selection)
-                    selectionBuilder.selection(normalizedField)
-                }
-
-                is InlineFragment -> {
-                    val normalizedInlineFragment = normalizeInlineFragment(selection)
-                    selectionBuilder.selection(normalizedInlineFragment)
-                }
-
-                is FragmentSpread -> {
-                    // Assuming FragmentSpread does not need to be normalized
-                    selectionBuilder.selection(selection)
-                }
+                is Field -> normalizeField(selection)
+                is InlineFragment -> normalizeInlineFragment(selection)
+                is FragmentSpread -> FragmentSpread.newFragmentSpread()
+                    .name("normalizedFragmentName") // TODO: support multiple fragment
+                    .directives(selection.directives)
+                    .build()
+                else -> selection
             }
+        }.sortedBy { it.toString() }
+
+        normalizedSelections.forEach { selection ->
+            selectionBuilder.selection(selection)
         }
 
         return selectionBuilder.build()
     }
-
     private fun normalizeField(field: Field): Field {
         val fieldBuilder = Field.newField()
 
@@ -78,4 +89,5 @@ object GraphqlQueryNormalizer {
 
         return inlineFragmentBuilder.build()
     }
+
 }

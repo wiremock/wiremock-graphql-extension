@@ -62,7 +62,7 @@ repositories {
 }
 
 dependencies {
-    testImplementation 'io.github.nilwurtz:wiremock-graphql-extension:0.2.0'
+    testImplementation 'io.github.nilwurtz:wiremock-graphql-extension:0.2.1'
 }
 ```
 
@@ -72,7 +72,7 @@ dependencies {
 <dependency>
     <groupId>io.github.nilwurtz</groupId>
     <artifactId>wiremock-graphql-extension</artifactId>
-    <version>0.2.0</version>
+    <version>0.2.1</version>
     <scope>test</scope>
 </dependency>
 ```

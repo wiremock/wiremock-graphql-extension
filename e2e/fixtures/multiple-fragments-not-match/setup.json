@@ -1,0 +1,3 @@
+{
+  "query": "fragment heroDetails on Hero { age } fragment sidekickDetails on Sidekick { name age } { hero { ...heroDetails }, sidekick { ...sidekickDetails } }"
+}
