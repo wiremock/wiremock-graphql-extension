@@ -1,3 +1,4 @@
+import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.*
 import com.thoughtworks.gauge.Step
 import io.github.nilwurtz.GraphqlBodyMatcher
@@ -8,5 +9,13 @@ class Steps {
         Datastore.server()
             ?.stubFor(post(urlEqualTo("/graphql"))
                 .andMatching(GraphqlBodyMatcher.withRequestJson(json)).willReturn(ok()))
+    }
+
+    fun a() {
+        WireMock.stubFor(
+            WireMock.post(WireMock.urlEqualTo("/graphql"))
+                .andMatching(GraphqlBodyMatcher.withRequestQuery("{ hero { name }}"))
+                .willReturn(WireMock.ok())
+        )
     }
 }

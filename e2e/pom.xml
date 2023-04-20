@@ -22,7 +22,7 @@
         <dependency>
             <artifactId>wiremock-graphql-extension</artifactId>
             <groupId>io.github.nilwurtz</groupId>
-            <version>0.1.1</version>
+            <version>0.2.0</version>
         </dependency>
         <dependency>
             <groupId>com.thoughtworks.gauge</groupId>
