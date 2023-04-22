@@ -8,7 +8,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 ### Changed
-
+- Update junit 5.8.1 -> 5.9.2
+- Update mockk-jvm 1.13.4 -> 1.13.5
 
 ## [0.2.1] - 2023-04-21
 ### Added

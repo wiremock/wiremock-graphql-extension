@@ -35,7 +35,7 @@
         <kotlin.compiler.jvmTarget>17</kotlin.compiler.jvmTarget>
         <gpg.skip>true</gpg.skip>
         <kotlin.version>1.8.20</kotlin.version>
-        <junit.version>5.8.1</junit.version>
+        <junit.version>5.9.2</junit.version>
         <wiremock.version>2.27.2</wiremock.version>
         <graphql-java.version>20.2</graphql-java.version>
     </properties>
@@ -73,7 +73,7 @@
         <dependency>
             <groupId>io.mockk</groupId>
             <artifactId>mockk-jvm</artifactId>
-            <version>1.13.4</version>
+            <version>1.13.5</version>
             <scope>test</scope>
         </dependency>
         <dependency>
