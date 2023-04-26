@@ -4,6 +4,8 @@ GraphqlBodyMatcherはWireMockの拡張で、Graphqlのリクエストが意味�
 空白などの処理に加え、クエリのソートを行い正規化します。
 graphqlのパースには`graphql-java`を利用しています。
 
+また、クエリと同時に変数（variables）も比較します。変数のJsonの比較には`org.json.JSONObject.similar`を利用しています。ただし、配列の順番は一致していなければなりません。
+
 以下の二つのクエリは一致するとみなされます。
 
 ```graphql
@@ -52,6 +54,35 @@ graphqlのパースには`graphql-java`を利用しています。
 }
 ```
 
+同様に、以下の二つの変数は一致するとみなされます。
+（`org.json.JsonObject.similar`の挙動に基づきます）
+
+```json
+{
+  "id": 1,
+  "name": "John Doe"
+}
+```
+
+```json
+{
+  "name": "John Doe",
+  "id": 1
+}
+```
+
+しかし、以下の二つの変数は一致しません（配列の順序が異なるため）。
+
+```json
+{
+  "ids": [1, 2, 3]
+}
+```
+```json
+{
+  "ids": [3, 2, 1]
+}
+```
 
 ## Usage
 ### Gradle
@@ -62,7 +93,7 @@ repositories {
 }
 
 dependencies {
-    testImplementation 'io.github.nilwurtz:wiremock-graphql-extension:0.2.1'
+    testImplementation 'io.github.nilwurtz:wiremock-graphql-extension:0.3.0'
 }
 ```
 
@@ -72,7 +103,7 @@ dependencies {
 <dependency>
     <groupId>io.github.nilwurtz</groupId>
     <artifactId>wiremock-graphql-extension</artifactId>
-    <version>0.2.1</version>
+    <version>0.3.0</version>
     <scope>test</scope>
 </dependency>
 ```
@@ -92,14 +123,67 @@ WireMock.stubFor(
 
 Jsonボディ内 `query` キーにGraphQLクエリが存在することを期待しています。
 
-withRequestQuery メソッドも利用できます。
+変数がある場合、Jsonボディ内 `variables` キーに変数が存在することを期待しています。
+
+```kotlin
+val expectedQuery = """
+    query HeroInfo($id: Int) {
+        hero(id: $id) {
+            name
+        }
+    }
+""".trimIndent()
+
+val expectedVariables = """
+    {
+        "id": 1
+    }
+""".trimIndent()
+
+val expectedJson = """
+    {
+        "query": "$expectedQuery",
+        "variables": $expectedVariables
+    }
+""".trimIndent()
+
+WireMock.stubFor(
+    WireMock.post(WireMock.urlEqualTo("/graphql"))
+        .andMatching(GraphqlBodyMatcher.withRequestJson(expectedJson))
+        .willReturn(WireMock.ok())
+)
+```
+
+`withRequestQueryAndVariables` メソッドも利用できます。
 
 ```kotlin
 import io.github.nilwurtz.GraphqlBodyMatcher
 
 WireMock.stubFor(
     WireMock.post(WireMock.urlEqualTo("/graphql"))
-        .andMatching(GraphqlBodyMatcher.withRequestQuery("{ hero { name }}"))
+        .andMatching(GraphqlBodyMatcher.withRequestQueryAndVariables("{ hero { name }}"))
+        .willReturn(WireMock.ok())
+)
+```
+
+```kotlin
+val expectedQuery = """
+    query HeroInfo($id: Int) {
+        hero(id: $id) {
+            name
+        }
+    }
+""".trimIndent()
+
+val expectedVariables = """
+    {
+        "id": 1
+    }
+""".trimIndent()
+
+WireMock.stubFor(
+    WireMock.post(WireMock.urlEqualTo("/graphql"))
+        .andMatching(GraphqlBodyMatcher.withRequestQueryAndVariables(expectedQuery, expectedVariables))
         .willReturn(WireMock.ok())
 )
 ```

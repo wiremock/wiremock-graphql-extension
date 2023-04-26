@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+
+### Changed
+
+
+## [0.3.0] - 2023-04-26
+### Added
 - Support Graphql Variables.
 
 ### Changed
