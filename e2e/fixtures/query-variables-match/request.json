@@ -1,0 +1,6 @@
+{
+  "query": "{ hero(id: 1) { name, friends { name } } }",
+  "variables": {
+    "id": 1
+  }
+}

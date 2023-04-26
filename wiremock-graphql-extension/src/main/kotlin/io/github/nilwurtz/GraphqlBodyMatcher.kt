@@ -15,28 +15,31 @@ class GraphqlBodyMatcher private constructor() : RequestMatcherExtension() {
 
     companion object {
         /**
-         * Creates a new instance of [GraphqlBodyMatcher] with the given GraphQL query string.
-         * The query string is wrapped in a JSON object with a "query" field, parsed, validated,
+         * Creates a new instance of [GraphqlBodyMatcher] with the given GraphQL query string and variables.
+         * The query string and variables are wrapped in a JSON object with "query" and "variables" fields, parsed, validated,
          * and normalized before being used for matching.
          *
          * @param expectedQuery The GraphQL query string that the matcher expects in requests.
-         * @return A new [GraphqlBodyMatcher] instance with the given expected query.
+         * @param expectedVariables The variables associated with the GraphQL query as a JSON string.
+         * @return A new [GraphqlBodyMatcher] instance with the given expected query and variables.
          * @throws InvalidJsonException if the generated JSON is malformed.
          * @throws InvalidQueryException if the given query is invalid.
          */
-        fun withRequestQuery(expectedQuery: String): GraphqlBodyMatcher {
+        fun withRequestQueryAndVariables(expectedQuery: String, expectedVariables: String? = null): GraphqlBodyMatcher {
             return GraphqlBodyMatcher().apply {
-                initExpectedRequestJson("""{"query": "$expectedQuery"}""")
+                val variablesJson = if (expectedVariables != null) ""","variables": $expectedVariables""" else ""
+                initExpectedRequestJson("""{"query": "$expectedQuery"$variablesJson}""")
             }
         }
 
         /**
          * Creates a new instance of [GraphqlBodyMatcher] with the given raw JSON string containing a
-         * GraphQL query. The JSON is expected to have a "query" field with the query string.
+         * GraphQL query and optional variables. The JSON is expected to have a "query" field with the query string
+         * and an optional "variables" field containing the variables.
          * The query is parsed, validated, and normalized before being used for matching.
          *
-         * @param expectedJson The raw JSON string containing the GraphQL query that the matcher expects in requests.
-         * @return A new [GraphqlBodyMatcher] instance with the given expected query.
+         * @param expectedJson The raw JSON string containing the GraphQL query and optional variables that the matcher expects in requests.
+         * @return A new [GraphqlBodyMatcher] instance with the given expected query and variables.
          * @throws InvalidJsonException if the given JSON is malformed.
          * @throws InvalidQueryException if the given query is invalid.
          */
@@ -51,10 +54,11 @@ class GraphqlBodyMatcher private constructor() : RequestMatcherExtension() {
 
     /**
      * Initializes the expected request JSON object from the given raw JSON string containing a
-     * GraphQL query. The JSON is expected to have a "query" field with the query string.
+     * GraphQL query and optional variables. The JSON is expected to have a "query" field with the query string
+     * and an optional "variables" field containing the variables.
      * The query is parsed and normalized before being used for matching.
      *
-     * @param expectedJson The raw JSON string containing the GraphQL query that the matcher expects in requests.
+     * @param expectedJson The raw JSON string containing the GraphQL query and optional variables that the matcher expects in requests.
      * @throws InvalidJsonException if the given JSON is malformed.
      * @throws InvalidQueryException if the given query inside the JSON is invalid.
      */
@@ -72,13 +76,13 @@ class GraphqlBodyMatcher private constructor() : RequestMatcherExtension() {
     }
 
     /**
-     * Compares the given [Request] and its GraphQL query against the expected query to determine
-     * if they match. If both queries are semantically equal after normalization, it returns
+     * Compares the given [Request] and its GraphQL query and variables against the expected query and variables to determine
+     * if they match. If both queries and variables are semantically equal after normalization, it returns
      * an exact match result; otherwise, it returns a no match result.
      *
-     * @param request The incoming request to match against the expected query.
+     * @param request The incoming request to match against the expected query and variables.
      * @param parameters Additional parameters that may be used for matching.
-     * @return [MatchResult.exactMatch] if the request query matches the expected query,
+     * @return [MatchResult.exactMatch] if the request query and variables match the expected query and variables,
      *         [MatchResult.noMatch] otherwise.
      * @throws InvalidJsonException if the request JSON or the expected JSON is invalid.
      * @throws InvalidQueryException if the request query or the expected query is invalid.
@@ -103,7 +107,15 @@ class GraphqlBodyMatcher private constructor() : RequestMatcherExtension() {
             throw InvalidQueryException("Invalid expected query: ${e.message}")
         }
 
-        return if (requestQuery.toString() == expectedQuery.toString()) {
+        // Extract and compare variables
+        val requestVariables = if (requestJson.has("variables")) requestJson.getJSONObject("variables") else JSONObject()
+        val expectedVariables = if (expectedRequestJson.has("variables")) expectedRequestJson.getJSONObject("variables") else JSONObject()
+
+        // Compare queries and variables
+        val isQueryMatch = requestQuery.toString() == expectedQuery.toString()
+        val isVariablesMatch = requestVariables.similar(expectedVariables)
+
+        return if (isQueryMatch && isVariablesMatch) {
             MatchResult.exactMatch()
         } else {
             MatchResult.noMatch()

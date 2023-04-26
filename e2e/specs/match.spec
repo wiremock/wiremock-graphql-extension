@@ -59,3 +59,8 @@
 * json<file:./fixtures/argument-not-match/setup.json>を受け取って200を返すスタブを登録する
 * URL"/graphql"にボディ<file:./fixtures/argument-not-match/request.json>で、POSTリクエストを送る
 * レスポンスステータスコードが"404"である
+
+## queryを指定して、マッチする
+* クエリ<file:./fixtures/query-match/setup-query.graphql>を受け取って200を返すスタブを登録する
+* URL"/graphql"にボディ<file:./fixtures/query-match/request.json>で、POSTリクエストを送る
+* レスポンスステータスコードが"200"である

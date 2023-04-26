@@ -1,0 +1,6 @@
+{
+  "query": "query GetHero($episode: Episode) { hero(episode: $episode) { age name } }",
+  "variables": {
+    "episode": "JEDI"
+  }
+}

@@ -28,8 +28,8 @@ class GraphqlBodyMatcherTest {
     }
 
     @Test
-    @DisplayName("test `withRequestQuery` when queries are identical")
-    fun testMatchedIdenticalWithQuery() {
+    @DisplayName("test `withRequest` when queries are identical")
+    fun testMatchedIdenticalWithRequest() {
         val request = mockk<Request>()
         val query = "{ hero { name friends { name }}}"
         // language=json
@@ -40,7 +40,33 @@ class GraphqlBodyMatcherTest {
         """.trimIndent()
 
         every { request.bodyAsString } returns json
-        val actual = GraphqlBodyMatcher.withRequestQuery(query).match(request, mockk())
+        val actual = GraphqlBodyMatcher.withRequestQueryAndVariables(query).match(request, mockk())
+        assertTrue(actual.isExactMatch)
+    }
+
+    @Test
+    @DisplayName("test `withRequest` when queries and variables are identical")
+    fun testMatchedIdenticalWithRequestAndVariables() {
+        val request = mockk<Request>()
+        val query = "query GetCharacters(\$ids: [ID!]) { characters(ids: \$ids) { name age } }"
+        val variables = """{"ids": [1, 2, 3]}"""
+        val escaped = "\$ids"
+
+        val json = """
+            {
+                "query": "query GetCharacters($escaped: [ID!]) { characters(ids: $escaped) { name age } }",
+                "variables": {
+                    "ids": [
+                        1,
+                        2,
+                        3
+                    ]
+                }
+            }
+        """.trimIndent()
+
+        every { request.bodyAsString } returns json
+        val actual = GraphqlBodyMatcher.withRequestQueryAndVariables(query, variables).match(request, mockk())
         assertTrue(actual.isExactMatch)
     }
 

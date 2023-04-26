@@ -1,0 +1,1 @@
+fragment heroDetails on Hero { name } fragment sidekickDetails on Sidekick { name age } { hero { ...heroDetails }, sidekick { ...sidekickDetails } }

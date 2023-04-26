@@ -6,8 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+- Support Graphql Variables.
 
 ### Changed
+- `withRequestQuery` method has been changed to `withRequestQueryAndVariables` and now takes `expectedVariables` as argument. `expectedVariables` is Nullable.
 - Update junit 5.8.1 -> 5.9.2
 - Update mockk-jvm 1.13.4 -> 1.13.5
 

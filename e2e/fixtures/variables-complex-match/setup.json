@@ -1,0 +1,10 @@
+{
+  "query": "query GetCharacters($ids: [ID!], $info: CharacterInfo) { characters(ids: $ids, info: $info) { name age } }",
+  "variables": {
+    "info": {
+      "minAge": 18,
+      "showOnlyActive": true
+    },
+    "ids": [1, 2, 3]
+  }
+}
