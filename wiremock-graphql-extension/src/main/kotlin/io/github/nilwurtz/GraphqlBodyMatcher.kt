@@ -11,7 +11,7 @@ import org.json.JSONException
 import org.json.JSONObject
 
 
-class GraphqlBodyMatcher private constructor() : RequestMatcherExtension() {
+class GraphqlBodyMatcher() : RequestMatcherExtension() {
 
     companion object {
         /**
@@ -99,12 +99,19 @@ class GraphqlBodyMatcher private constructor() : RequestMatcherExtension() {
             throw InvalidQueryException("Invalid request query: ${e.message}")
         }
 
-        val expectedQuery = try {
+        val expectedQuery =  if (parameters.containsKey("expectedQuery")) {
+            expectedRequestJson = JSONObject(parameters.getString("expectedQuery"))
             expectedRequestJson.getString("query")
                 .let { Parser().parseDocument(it) }
                 .let { GraphqlQueryNormalizer.normalizeGraphqlDocument(it) }
-        } catch (e: Exception) {
-            throw InvalidQueryException("Invalid expected query: ${e.message}")
+        } else {
+            try {
+                expectedRequestJson.getString("query")
+                    .let { Parser().parseDocument(it) }
+                    .let { GraphqlQueryNormalizer.normalizeGraphqlDocument(it) }
+           } catch (e: Exception) {
+               throw InvalidQueryException("Invalid expected query: ${e.message}")
+           }
         }
 
         // Extract and compare variables
