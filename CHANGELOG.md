@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
+## [0.4.0] - 2023-05-25
+### Added
+- Support Remote Wiremock Server.
 
 ## [0.3.0] - 2023-04-26
 ### Added

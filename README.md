@@ -188,6 +188,50 @@ WireMock.stubFor(
 )
 ```
 
+
+## With Remote Wiremock Server
+
+docker のようなリモートサーバーでWiremockを起動する場合、以下のような設定が必要です。
+
+Release から `wiremock-graphql-extension-x.y.z-jar-with-dependencies.jar`をDLしてください
+
+### サーバー側の設定
+
+#### docker run する場合
+
+```
+docker run -it --rm \
+      -p 8080:8080 \
+      --name wiremock \
+      -v /path/to/wiremock-graphql-extension-0.3.0-jar-with-dependencies.jar:/var/wiremock/extensions/wiremock-graphql-extension-0.3.0-jar-with-dependencies.jar \
+      wiremock/wiremock \
+      --extensions io.github.nilwurtz.GraphqlBodyMatcher
+```
+
+#### docker build する場合
+
+```dockerfile
+FROM wiremock/wiremock:latest
+COPY ./wiremock-graphql-extension-0.3.0-jar-with-dependencies.jar /var/wiremock/extensions/wiremock-graphql-extension-0.3.0-jar-with-dependencies.jar
+CMD ["--extensions", "io.github.nilwurtz.GraphqlBodyMatcher"]
+```
+
+### テスト側の設定
+
+```kotlin
+import com.github.tomakehurst.wiremock.client.WireMock
+import com.github.tomakehurst.wiremock.client.WireMock.*
+
+fun registerGraphQLWiremock(json: String) {
+     WireMock(8080).register(post(urlPathEqualTo(endPoint))
+        .andMatching("graphql-body-matcher", Parameters.one("expectedQuery", json))
+        .willReturn(
+            aResponse()
+                 .withStatus(200)
+     ))
+}
+```
+
 ## Limitations
 現段階ではメジャーリリース前で、Queryの一部分をサポートしており、ミューテーションやエイリアスなどの全ての機能は網羅していません。将来的にはこれらの機能もサポートする予定です。
 
