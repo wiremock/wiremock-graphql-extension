@@ -4,6 +4,7 @@ import com.github.tomakehurst.wiremock.extension.Parameters
 import com.github.tomakehurst.wiremock.http.Request
 import com.github.tomakehurst.wiremock.matching.MatchResult
 import com.github.tomakehurst.wiremock.matching.RequestMatcherExtension
+import graphql.language.Document
 import graphql.parser.Parser
 import io.github.nilwurtz.exceptions.InvalidJsonException
 import io.github.nilwurtz.exceptions.InvalidQueryException
@@ -15,7 +16,7 @@ class GraphqlBodyMatcher() : RequestMatcherExtension() {
 
     companion object {
         const val extensionName = "graphql-body-matcher"
-        private const val expectedQueryKey = "expectedQuery"
+        private const val expectedJsonKey = "expectedJson"
 
         /**
          * Creates a new instance of [GraphqlBodyMatcher] with the given GraphQL query string and variables.
@@ -96,51 +97,38 @@ class GraphqlBodyMatcher() : RequestMatcherExtension() {
      * @throws InvalidQueryException if the request query or the expected query is invalid.
      */
     override fun match(request: Request, parameters: Parameters): MatchResult {
-        val requestBody = request.bodyAsString
-        val requestJson = JSONObject(requestBody)
-
-        val requestQuery = try {
-            requestJson.getString("query")
-                .let { Parser().parseDocument(it) }
-                .let { GraphqlQueryNormalizer.normalizeGraphqlDocument(it) }
-        } catch (e: Exception) {
-            throw InvalidQueryException("Invalid request query: ${e.message}")
+        // for remote call
+        if (parameters.containsKey(expectedJsonKey)) {
+            expectedRequestJson = JSONObject(parameters.getString(expectedJsonKey))
         }
+        val requestJson = JSONObject(request.bodyAsString)
 
-        val expectedQuery = if (parameters.containsKey(expectedQueryKey)) {
-            expectedRequestJson = JSONObject(parameters.getString(expectedQueryKey))
-            expectedRequestJson.getString("query")
-                .let { Parser().parseDocument(it) }
-                .let { GraphqlQueryNormalizer.normalizeGraphqlDocument(it) }
-        } else {
-            try {
-                expectedRequestJson.getString("query")
-                    .let { Parser().parseDocument(it) }
-                    .let { GraphqlQueryNormalizer.normalizeGraphqlDocument(it) }
-            } catch (e: Exception) {
-                throw InvalidQueryException("Invalid expected query: ${e.message}")
-            }
-        }
+        val isQueryMatch =
+            requestJson.graphqlQueryDocument().normalize().toString() == expectedRequestJson.graphqlQueryDocument()
+                .normalize().toString()
+        val isVariablesMatch = requestJson.graphqlVariables().similar(expectedRequestJson.graphqlVariables())
 
-        // Extract and compare variables
-        val requestVariables =
-            if (requestJson.has("variables")) requestJson.getJSONObject("variables") else JSONObject()
-        val expectedVariables =
-            if (expectedRequestJson.has("variables")) expectedRequestJson.getJSONObject("variables") else JSONObject()
-
-        // Compare queries and variables
-        val isQueryMatch = requestQuery.toString() == expectedQuery.toString()
-        val isVariablesMatch = requestVariables.similar(expectedVariables)
-
-        return if (isQueryMatch && isVariablesMatch) {
-            MatchResult.exactMatch()
-        } else {
-            MatchResult.noMatch()
+        return when {
+            isQueryMatch && isVariablesMatch -> MatchResult.exactMatch()
+            else -> MatchResult.noMatch()
         }
     }
 
     override fun getName(): String {
         return extensionName
     }
+}
 
+private fun JSONObject.graphqlQueryDocument(): Document {
+    return this.optString("query")
+        .let { Parser().parseDocument(it) }
+        ?: throw InvalidQueryException("Invalid query")
+}
+
+private fun JSONObject.graphqlVariables(): JSONObject {
+    return this.optJSONObject("variables") ?: JSONObject()
+}
+
+private fun Document.normalize(): Document {
+    return GraphqlQueryNormalizer.normalizeGraphqlDocument(this)
 }

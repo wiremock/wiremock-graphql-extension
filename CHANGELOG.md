@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
+## [0.5.0] - 2023-08-11
+### Added
+- Added `GraphqlBodyMatcher.extensionName` which can used easily when using remote wiremock server.
+
+### Changed
+- Change parameter key `expectedQuery` to `expectedJson` for remote wiremock server.
+
 ## [0.4.0] - 2023-05-25
 ### Added
 - Support Remote Wiremock Server.

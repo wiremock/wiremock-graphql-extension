@@ -93,7 +93,7 @@ repositories {
 }
 
 dependencies {
-    testImplementation 'io.github.nilwurtz:wiremock-graphql-extension:0.3.0'
+    testImplementation 'io.github.nilwurtz:wiremock-graphql-extension:0.5.0'
 }
 ```
 
@@ -103,7 +103,7 @@ dependencies {
 <dependency>
     <groupId>io.github.nilwurtz</groupId>
     <artifactId>wiremock-graphql-extension</artifactId>
-    <version>0.3.0</version>
+    <version>0.5.0</version>
     <scope>test</scope>
 </dependency>
 ```
@@ -203,7 +203,7 @@ Release から `wiremock-graphql-extension-x.y.z-jar-with-dependencies.jar`をDL
 docker run -it --rm \
       -p 8080:8080 \
       --name wiremock \
-      -v /path/to/wiremock-graphql-extension-0.3.0-jar-with-dependencies.jar:/var/wiremock/extensions/wiremock-graphql-extension-0.3.0-jar-with-dependencies.jar \
+      -v /path/to/wiremock-graphql-extension-0.5.0-jar-with-dependencies.jar:/var/wiremock/extensions/wiremock-graphql-extension-0.5.0-jar-with-dependencies.jar \
       wiremock/wiremock \
       --extensions io.github.nilwurtz.GraphqlBodyMatcher
 ```
@@ -212,7 +212,7 @@ docker run -it --rm \
 
 ```dockerfile
 FROM wiremock/wiremock:latest
-COPY ./wiremock-graphql-extension-0.3.0-jar-with-dependencies.jar /var/wiremock/extensions/wiremock-graphql-extension-0.3.0-jar-with-dependencies.jar
+COPY ./wiremock-graphql-extension-0.5.0-jar-with-dependencies.jar /var/wiremock/extensions/wiremock-graphql-extension-0.5.0-jar-with-dependencies.jar
 CMD ["--extensions", "io.github.nilwurtz.GraphqlBodyMatcher"]
 ```
 
@@ -221,10 +221,11 @@ CMD ["--extensions", "io.github.nilwurtz.GraphqlBodyMatcher"]
 ```kotlin
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.*
+import io.github.nilwurtz.GraphqlBodyMatcher
 
 fun registerGraphQLWiremock(json: String) {
      WireMock(8080).register(post(urlPathEqualTo(endPoint))
-        .andMatching("graphql-body-matcher", Parameters.one("expectedQuery", json))
+        .andMatching(GraphqlBodyMatcher.extensionName, Parameters.one("expectedJson", json))
         .willReturn(
             aResponse()
                  .withStatus(200)
