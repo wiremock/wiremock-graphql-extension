@@ -16,19 +16,19 @@ class ExecutionHooks {
                 .notifier(ConsoleNotifier(true))
         )
             .let {
-                Datastore.server(it);
+                Datastore.localServer(it);
                 it.start()
             }
     }
 
     @AfterSuite()
     fun tearDownSuite() {
-        Datastore.server()?.shutdown()
+        Datastore.localServer()?.shutdown()
     }
 
     @BeforeScenario()
     fun setupScenario() {
-        Datastore.server()?.let {
+        Datastore.localServer()?.let {
             it.resetMappings()
             it.resetRequests()
         }
@@ -36,11 +36,11 @@ class ExecutionHooks {
 }
 
 object Datastore {
-    fun server(): WireMockServer? {
-        return SuiteDataStore.get("server") as WireMockServer?
+    fun localServer(): WireMockServer? {
+        return SuiteDataStore.get("localServer") as WireMockServer?
     }
 
-    fun server(client: WireMockServer) {
-        SuiteDataStore.put("server", client)
+    fun localServer(client: WireMockServer) {
+        SuiteDataStore.put("localServer", client)
     }
 }
