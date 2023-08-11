@@ -14,6 +14,9 @@ import org.json.JSONObject
 class GraphqlBodyMatcher() : RequestMatcherExtension() {
 
     companion object {
+        const val extensionName = "graphql-body-matcher"
+        private const val expectedQueryKey = "expectedQuery"
+
         /**
          * Creates a new instance of [GraphqlBodyMatcher] with the given GraphQL query string and variables.
          * The query string and variables are wrapped in a JSON object with "query" and "variables" fields, parsed, validated,
@@ -26,9 +29,11 @@ class GraphqlBodyMatcher() : RequestMatcherExtension() {
          * @throws InvalidQueryException if the given query is invalid.
          */
         fun withRequestQueryAndVariables(expectedQuery: String, expectedVariables: String? = null): GraphqlBodyMatcher {
+            // Avoid to parse json here. It will be parsed in initExpectedRequestJson
             return GraphqlBodyMatcher().apply {
-                val variablesJson = if (expectedVariables != null) ""","variables": $expectedVariables""" else ""
-                initExpectedRequestJson("""{"query": "$expectedQuery"$variablesJson}""")
+                val variablesJsonOrEmptyString =
+                    if (expectedVariables != null) ""","variables": $expectedVariables""" else ""
+                initExpectedRequestJson("""{"query": "$expectedQuery"$variablesJsonOrEmptyString}""")
             }
         }
 
@@ -71,7 +76,10 @@ class GraphqlBodyMatcher() : RequestMatcherExtension() {
         } catch (e: JSONException) {
             throw InvalidJsonException("Failed to parse the provided JSON string: $expectedJson", e)
         } catch (e: Exception) {
-            throw InvalidQueryException("Failed to parse the provided GraphQL query: ${expectedRequestJson.getString("query")}", e)
+            throw InvalidQueryException(
+                "Failed to parse the provided GraphQL query: ${expectedRequestJson.getString("query")}",
+                e
+            )
         }
     }
 
@@ -99,8 +107,8 @@ class GraphqlBodyMatcher() : RequestMatcherExtension() {
             throw InvalidQueryException("Invalid request query: ${e.message}")
         }
 
-        val expectedQuery =  if (parameters.containsKey("expectedQuery")) {
-            expectedRequestJson = JSONObject(parameters.getString("expectedQuery"))
+        val expectedQuery = if (parameters.containsKey(expectedQueryKey)) {
+            expectedRequestJson = JSONObject(parameters.getString(expectedQueryKey))
             expectedRequestJson.getString("query")
                 .let { Parser().parseDocument(it) }
                 .let { GraphqlQueryNormalizer.normalizeGraphqlDocument(it) }
@@ -109,14 +117,16 @@ class GraphqlBodyMatcher() : RequestMatcherExtension() {
                 expectedRequestJson.getString("query")
                     .let { Parser().parseDocument(it) }
                     .let { GraphqlQueryNormalizer.normalizeGraphqlDocument(it) }
-           } catch (e: Exception) {
-               throw InvalidQueryException("Invalid expected query: ${e.message}")
-           }
+            } catch (e: Exception) {
+                throw InvalidQueryException("Invalid expected query: ${e.message}")
+            }
         }
 
         // Extract and compare variables
-        val requestVariables = if (requestJson.has("variables")) requestJson.getJSONObject("variables") else JSONObject()
-        val expectedVariables = if (expectedRequestJson.has("variables")) expectedRequestJson.getJSONObject("variables") else JSONObject()
+        val requestVariables =
+            if (requestJson.has("variables")) requestJson.getJSONObject("variables") else JSONObject()
+        val expectedVariables =
+            if (expectedRequestJson.has("variables")) expectedRequestJson.getJSONObject("variables") else JSONObject()
 
         // Compare queries and variables
         val isQueryMatch = requestQuery.toString() == expectedQuery.toString()
@@ -130,7 +140,7 @@ class GraphqlBodyMatcher() : RequestMatcherExtension() {
     }
 
     override fun getName(): String {
-        return "graphql-body-matcher"
+        return extensionName
     }
 
 }
