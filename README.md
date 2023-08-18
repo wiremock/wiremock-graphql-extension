@@ -1,91 +1,26 @@
 # Graphql Wiremock Extension - Graphql Body Matcher
-GraphqlBodyMatcherはWireMockの拡張で、Graphqlのリクエストが意味的に一致しているかを検証します。これは、WireMockのカスタムリクエストマッチャーを利用して実現しています。
 
-空白などの処理に加え、クエリのソートを行い正規化します。
-graphqlのパースには`graphql-java`を利用しています。
+*A extension for GraphQL testing with Wiremock*
 
-また、クエリと同時に変数（variables）も比較します。変数のJsonの比較には`org.json.JSONObject.similar`を利用しています。ただし、配列の順番は一致していなければなりません。
+GraphqlBodyMatcher is an extension for [WireMock](https://wiremock.org/) that allows for semantical verification of GraphQL requests.
 
-以下の二つのクエリは一致するとみなされます。
+GraphqlBodyMatcherは[WireMock](https://wiremock.org/)の拡張で、GraphQLのリクエストが意味的に一致しているかを検証します。
 
-```graphql
-{
-    hero {
-        name
-        friends {
-            name
-            age
-        }
-    }
-}
-```
-```graphql
-{
-    hero {
-        friends {
-            age
-            name
-        }
-        name
-    }
-}
-```
-以下の二つのクエリは一致しません。
+## Overview 📖
 
-```graphql
-{
-    hero {
-        name
-        friends {
-            name
-            age
-        }
-    }
-}
-```
-```graphql
-{
-    hero {
-        name
-        friends {
-            name
-        }
-    }
-}
-```
+- In addition to handling whitespaces, the extension sorts and normalizes queries. The GraphQL parsing is handled by `graphql-java`.
+- Beyond just queries, it also compares variables. For the comparison of JSON variables, `org.json.JSONObject.similar` is employed. It's important to note that the order of arrays must match.
 
-同様に、以下の二つの変数は一致するとみなされます。
-（`org.json.JsonObject.similar`の挙動に基づきます）
+For a comprehensive understanding of our matching logic and details on our match strategy, please refer to our [MatchStrategy documentation](./docs/MatchStrategy.md).
 
-```json
-{
-  "id": 1,
-  "name": "John Doe"
-}
-```
+- この拡張機能は、空白の取り扱いに加えて、クエリをソートし正規化します。GraphQLのパースには`graphql-java`を使用しています。
+- クエリだけでなく、変数も比較されます。変数のJSONの比較には`org.json.JSONObject.similar`を使用しますが、配列の順番も一致している必要があります。
 
-```json
-{
-  "name": "John Doe",
-  "id": 1
-}
-```
+詳しいマッチングロジックなど関しては、[MatchStrategyのドキュメント](./docs/MatchStrategy.md)を参照してください。
 
-しかし、以下の二つの変数は一致しません（配列の順序が異なるため）。
 
-```json
-{
-  "ids": [1, 2, 3]
-}
-```
-```json
-{
-  "ids": [3, 2, 1]
-}
-```
-
-## Usage
-### Gradle
+## Usage 🛠️
+### For Gradle:
 
 ```groovy
 repositories {
@@ -97,7 +32,7 @@ dependencies {
 }
 ```
 
-### Maven
+### For Maven:
 
 ```xml
 <dependency>
@@ -109,8 +44,8 @@ dependencies {
 ```
 
 
-## Example
-
+## Code Examples 💡
+Here are some code examples to get started:
 ```kotlin
 import io.github.nilwurtz.GraphqlBodyMatcher
 
@@ -121,9 +56,7 @@ WireMock.stubFor(
 )
 ```
 
-Jsonボディ内 `query` キーにGraphQLクエリが存在することを期待しています。
-
-変数がある場合、Jsonボディ内 `variables` キーに変数が存在することを期待しています。
+The GraphQL query is expected inside the `"query"` key and variables within the `"variables"` key.
 
 ```kotlin
 val expectedQuery = """
@@ -154,7 +87,7 @@ WireMock.stubFor(
 )
 ```
 
-`withRequestQueryAndVariables` メソッドも利用できます。
+The `withRequestQueryAndVariables` method can also be used:
 
 ```kotlin
 import io.github.nilwurtz.GraphqlBodyMatcher
@@ -188,17 +121,14 @@ WireMock.stubFor(
 )
 ```
 
+## Running with a Remote Wiremock Server 🌍
 
-## With Remote Wiremock Server
+If you are using Wiremock on a remote server such as Docker, please see the configurations below:
 
-docker のようなリモートサーバーでWiremockを起動する場合、以下のような設定が必要です。
+Please download `wiremock-graphql-extension-x.y.z-jar-with-dependencies.jar` from the Release section.
 
-Release から `wiremock-graphql-extension-x.y.z-jar-with-dependencies.jar`をDLしてください
-
-### サーバー側の設定
-
-#### docker run する場合
-
+### Server Configuration
+#### When running with `docker run`:
 ```
 docker run -it --rm \
       -p 8080:8080 \
@@ -208,15 +138,16 @@ docker run -it --rm \
       --extensions io.github.nilwurtz.GraphqlBodyMatcher
 ```
 
-#### docker build する場合
-
+#### When building with `docker build`:
 ```dockerfile
 FROM wiremock/wiremock:latest
 COPY ./wiremock-graphql-extension-0.5.0-jar-with-dependencies.jar /var/wiremock/extensions/wiremock-graphql-extension-0.5.0-jar-with-dependencies.jar
 CMD ["--extensions", "io.github.nilwurtz.GraphqlBodyMatcher"]
 ```
 
-### テスト側の設定
+### Client-side (Test) Configuration
+
+NOTE: When using a Remote Wiremock Server, you're requested to manage everything within a single JSON format.
 
 ```kotlin
 import com.github.tomakehurst.wiremock.client.WireMock
@@ -233,11 +164,11 @@ fun registerGraphQLWiremock(json: String) {
 }
 ```
 
-## Limitations
-現段階ではメジャーリリース前で、Queryの一部分をサポートしており、ミューテーションやエイリアスなどの全ての機能は網羅していません。将来的にはこれらの機能もサポートする予定です。
+## Limitations 🚧
+This project currently focuses on supporting the fundamental parts of Queries. Some advanced features, such as mutations or aliases, are not yet fully supported. However, I aim to expand this scope over time.
 
-## License
+## License 📜
 This project is licensed under the terms of the MIT License.
 
-## Contributing
+## Contributing 🤝
 Contributions are welcome! Feel free to open an issue or submit a pull request if you have any improvements or suggestions.
