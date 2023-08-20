@@ -71,9 +71,10 @@ class GraphqlBodyMatcher() : RequestMatcherExtension() {
     private fun initExpectedRequestJson(expectedJson: String) {
         try {
             expectedRequestJson = JSONObject(expectedJson)
-            val query = expectedRequestJson.getString("query")
             // Attempt to parse and normalize the query to check for validity
-            Parser().parseDocument(query)
+            expectedRequestJson.getString("query").run {
+                Parser().parseDocument(this)
+            }
         } catch (e: JSONException) {
             throw InvalidJsonException("Failed to parse the provided JSON string: $expectedJson", e)
         } catch (e: Exception) {
