@@ -32,13 +32,16 @@ jobs:
         run: make install
         working-directory: e2e
 
+      - name: Run docker for e2e
+        run: make docker
+        working-directory: e2e
+
       - name: Run e2e
         run: make clean test_compile run TAGS='!unimplemented'
         working-directory: e2e
 
       - name: Run remote e2e
         run: |-
-          make docker
           sed -i 's/rest.baseUrl=http:\/\/localhost:8080/rest.baseUrl=http:\/\/localhost:8888/' src/test/resources/playtest-gauge-rest.default.properties
           make run TAGS='!unimplemented,remote'
         working-directory: e2e

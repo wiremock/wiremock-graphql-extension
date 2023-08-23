@@ -3,16 +3,16 @@
 all: install clean test_compile run
 
 install:
-	cd ../wiremock-graphql-extension && mvn install
+	cd ../wiremock-graphql-extension && mvn install -Dmaven.wagon.http.progress=false
 
 clean:
 	mvn clean
 
 test_compile:
-	mvn test-compile
+	mvn test-compile -Dmaven.wagon.http.progress=false
 
 run:
-	mvn gauge:execute -Dtags="$(TAGS)"
+	mvn gauge:execute -Dtags="$(TAGS)" -Dmaven.wagon.http.progress=false
 
 docker: docker/build docker/run
 
