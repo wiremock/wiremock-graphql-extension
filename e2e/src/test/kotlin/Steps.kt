@@ -1,13 +1,18 @@
 import com.github.tomakehurst.wiremock.client.WireMock.*
+import com.github.tomakehurst.wiremock.extension.Parameters
 import com.thoughtworks.gauge.Step
 import io.github.nilwurtz.GraphqlBodyMatcher
 
 class Steps {
     @Step("json<json>を受け取って200を返すスタブを登録する")
     fun setupGraphqlJsonStub(json: String) {
+        // for remote
+        Datastore.client()?.register(post(urlEqualTo("/graphql"))
+            .andMatching(GraphqlBodyMatcher.extensionName, Parameters.one("expectedJson", json)).willReturn(ok()))
+        // for local
         Datastore.localServer()
             ?.stubFor(post(urlEqualTo("/graphql"))
-                .andMatching(GraphqlBodyMatcher.withRequestJson(json)).willReturn(ok()))
+                .andMatching(GraphqlBodyMatcher.extensionName, Parameters.one("expectedJson", json)).willReturn(ok()))
     }
 
     @Step("クエリ<query>を受け取って200を返すスタブを登録する")
