@@ -6,7 +6,7 @@
 
     <artifactId>wiremock-graphql-extension</artifactId>
     <groupId>io.github.nilwurtz</groupId>
-    <version>0.6.0</version>
+    <version>0.6.1</version>
     <packaging>jar</packaging>
     <name>wiremock-graphql-extension</name>
     <description>A WireMock extension for handling GraphQL requests, allowing for easy mocking of GraphQL APIs in
@@ -32,12 +32,14 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <kotlin.code.style>official</kotlin.code.style>
-        <kotlin.compiler.jvmTarget>1.8</kotlin.compiler.jvmTarget>
+        <kotlin.compiler.jvmTarget>11</kotlin.compiler.jvmTarget>
         <gpg.skip>true</gpg.skip>
-        <kotlin.version>1.8.20</kotlin.version>
-        <junit.version>5.9.2</junit.version>
+        <kotlin.version>1.9.10</kotlin.version>
+        <junit.version>5.10.0</junit.version>
         <wiremock.version>3.0.0</wiremock.version>
-        <graphql-java.version>20.2</graphql-java.version>
+        <graphql-java.version>21.0</graphql-java.version>
+        <json.version>20230618</json.version>
+        <mockk.version>1.13.7</mockk.version>
     </properties>
 
     <repositories>
@@ -73,7 +75,7 @@
         <dependency>
             <groupId>io.mockk</groupId>
             <artifactId>mockk-jvm</artifactId>
-            <version>1.13.5</version>
+            <version>${mockk.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -84,7 +86,7 @@
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
-            <version>20230227</version>
+            <version>${json.version}</version>
         </dependency>
     </dependencies>
 

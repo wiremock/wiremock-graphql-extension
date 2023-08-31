@@ -9,7 +9,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-## [0.6.0] - 2023-08-31
+## [0.6.1] - 2023-08-31
+### Changed
+- Update target jvmVersion 1.8 -> 11
+- Update graphql-java 20.2 -> 21.0
+- Update json 20230227 -> 20230618
+- Update dev dependencies (kotlin, mockk, junit)
+
+## [0.6.0] (deprecated) - 2023-08-31
 ### Changed
 - Update wiremock 2.27.2 -> 3.0.0!
 - `withRequestQueryAndVariables` method has been changed to deprecate.
