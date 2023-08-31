@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 ### Changed
+- `withRequestQueryAndVariables` method has been changed to deprecate.
 
 ## [0.5.0] - 2023-08-11
 ### Added
