@@ -6,13 +6,13 @@
 
     <artifactId>wiremock-graphql-extension</artifactId>
     <groupId>io.github.nilwurtz</groupId>
-    <version>0.5.0</version>
+    <version>0.6.0</version>
     <packaging>jar</packaging>
     <name>wiremock-graphql-extension</name>
     <description>A WireMock extension for handling GraphQL requests, allowing for easy mocking of GraphQL APIs in
         integration tests and development environments.
     </description>
-    <url>https://example.com/project-url</url>
+    <url>https://github.com/nilwurtz/wiremock-graphql-extension</url>
 
     <developers>
         <developer>
