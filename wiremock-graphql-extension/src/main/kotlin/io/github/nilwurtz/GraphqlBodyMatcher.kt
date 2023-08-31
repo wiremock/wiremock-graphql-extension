@@ -29,6 +29,7 @@ class GraphqlBodyMatcher() : RequestMatcherExtension() {
          * @throws InvalidJsonException if the generated JSON is malformed.
          * @throws InvalidQueryException if the given query is invalid.
          */
+        @Deprecated("This method will be deleted in a future release. Use withRequestJson instead.")
         fun withRequestQueryAndVariables(expectedQuery: String, expectedVariables: String? = null): GraphqlBodyMatcher {
             // Avoid to parse json here. It will be parsed in initExpectedRequestJson
             return GraphqlBodyMatcher().apply {
