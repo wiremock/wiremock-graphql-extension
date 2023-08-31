@@ -1,6 +1,8 @@
 # Graphql Wiremock Extension - Graphql Body Matcher
 
-*A extension for GraphQL testing with Wiremock*
+⚠️ **IMPORTANT**: Starting from version 0.6, this extension requires WireMock 3.x. WireMock 2.x is no longer supported from this version onwards.
+
+*An extension for GraphQL testing with Wiremock*
 
 GraphqlBodyMatcher is an extension for [WireMock](https://wiremock.org/) that allows for semantical verification of GraphQL requests.
 
@@ -28,7 +30,7 @@ repositories {
 }
 
 dependencies {
-    testImplementation 'io.github.nilwurtz:wiremock-graphql-extension:0.5.0'
+    testImplementation 'io.github.nilwurtz:wiremock-graphql-extension:0.6.0'
 }
 ```
 
@@ -38,7 +40,7 @@ dependencies {
 <dependency>
     <groupId>io.github.nilwurtz</groupId>
     <artifactId>wiremock-graphql-extension</artifactId>
-    <version>0.5.0</version>
+    <version>0.6.0</version>
     <scope>test</scope>
 </dependency>
 ```
@@ -87,39 +89,7 @@ WireMock.stubFor(
 )
 ```
 
-The `withRequestQueryAndVariables` method can also be used:
-
-```kotlin
-import io.github.nilwurtz.GraphqlBodyMatcher
-
-WireMock.stubFor(
-    WireMock.post(WireMock.urlEqualTo("/graphql"))
-        .andMatching(GraphqlBodyMatcher.withRequestQueryAndVariables("{ hero { name }}"))
-        .willReturn(WireMock.ok())
-)
-```
-
-```kotlin
-val expectedQuery = """
-    query HeroInfo($id: Int) {
-        hero(id: $id) {
-            name
-        }
-    }
-""".trimIndent()
-
-val expectedVariables = """
-    {
-        "id": 1
-    }
-""".trimIndent()
-
-WireMock.stubFor(
-    WireMock.post(WireMock.urlEqualTo("/graphql"))
-        .andMatching(GraphqlBodyMatcher.withRequestQueryAndVariables(expectedQuery, expectedVariables))
-        .willReturn(WireMock.ok())
-)
-```
+The `withRequestQueryAndVariables` method has been deprecated from version 0.6.0 onwards. Please use `withRequestJson` instead. 
 
 ## Running with a Remote Wiremock Server 🌍
 
@@ -133,7 +103,7 @@ Please download `wiremock-graphql-extension-x.y.z-jar-with-dependencies.jar` fro
 docker run -it --rm \
       -p 8080:8080 \
       --name wiremock \
-      -v /path/to/wiremock-graphql-extension-0.5.0-jar-with-dependencies.jar:/var/wiremock/extensions/wiremock-graphql-extension-0.5.0-jar-with-dependencies.jar \
+      -v /path/to/wiremock-graphql-extension-0.6.0-jar-with-dependencies.jar:/var/wiremock/extensions/wiremock-graphql-extension-0.6.0-jar-with-dependencies.jar \
       wiremock/wiremock \
       --extensions io.github.nilwurtz.GraphqlBodyMatcher
 ```
@@ -141,7 +111,7 @@ docker run -it --rm \
 #### When building with `docker build`:
 ```dockerfile
 FROM wiremock/wiremock:latest
-COPY ./wiremock-graphql-extension-0.5.0-jar-with-dependencies.jar /var/wiremock/extensions/wiremock-graphql-extension-0.5.0-jar-with-dependencies.jar
+COPY ./wiremock-graphql-extension-0.6.0-jar-with-dependencies.jar /var/wiremock/extensions/wiremock-graphql-extension-0.6.0-jar-with-dependencies.jar
 CMD ["--extensions", "io.github.nilwurtz.GraphqlBodyMatcher"]
 ```
 

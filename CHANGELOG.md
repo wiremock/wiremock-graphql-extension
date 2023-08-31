@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 ### Changed
+
+## [0.6.0] - 2023-08-31
+### Changed
+- Update wiremock 2.27.2 -> 3.0.0!
 - `withRequestQueryAndVariables` method has been changed to deprecate.
 
 ## [0.5.0] - 2023-08-11
