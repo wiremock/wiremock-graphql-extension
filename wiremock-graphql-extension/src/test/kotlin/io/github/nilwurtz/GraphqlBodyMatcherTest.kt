@@ -286,4 +286,23 @@ class GraphqlBodyMatcherTest {
             assertTrue(actual.isExactMatch)
         }
     }
+
+    @Nested
+    @DisplayName("test `withRemoteRequestJson`")
+    inner class WithRemoteRequestJson {
+        @Test
+        @DisplayName("returns Parameters with expectedJsonKey")
+        fun testMatchedIdentical() {
+            // language=json
+            val json = """
+            {
+                "query": "{ hero { name friends { name }}}"
+            }
+        """.trimIndent()
+
+            val actual = GraphqlBodyMatcher.withRequest(json)
+            assertTrue(actual.containsKey("expectedJson"))
+            assertEquals(json, actual.getString("expectedJson"))
+        }
+    }
 }

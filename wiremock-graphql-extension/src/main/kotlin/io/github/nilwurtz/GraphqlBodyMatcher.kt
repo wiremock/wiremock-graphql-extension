@@ -55,6 +55,18 @@ class GraphqlBodyMatcher() : RequestMatcherExtension() {
                 initExpectedRequestJson(expectedJson)
             }
         }
+
+        /**
+        * Creates a Parameters instance containing the given raw JSON string expected in the GraphQL request.
+        *
+        * This method is used to set up JSON expected in remote requests. The expectedJson parameter should be a raw JSON string that encapsulates the expected query and optionally variables for the GraphQL request. This string is used to create a parameters object utilized internally in the GraphqlBodyMatcher.
+        *
+        * @param expectedJson A raw JSON string that contains the GraphQL query and optionally variables expected in the requests.
+        * @return A Parameters instance created based on the expected JSON string.
+        */
+        fun withRequest(expectedJson: String): Parameters {
+           return Parameters.one(expectedJsonKey, expectedJson)
+        }
     }
 
     private lateinit var expectedRequestJson: JSONObject

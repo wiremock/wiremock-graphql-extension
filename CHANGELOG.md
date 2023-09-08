@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
+## [0.6.2] - 2023-09-08
+### Added
+- Added `withRequest` method which can used easily when using remote wiremock server.
+
 ## [0.6.1] - 2023-08-31
 ### Changed
 - Update target jvmVersion 1.8 -> 11

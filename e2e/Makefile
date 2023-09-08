@@ -16,6 +16,9 @@ run:
 
 docker: docker/build docker/run
 
+docker/stop:
+	docker stop $$(docker ps -q --filter ancestor=wiremock-graphql-extension:latest)
+
 docker/build:
 	cd ../wiremock-graphql-extension && docker build -t wiremock-graphql-extension:latest .
 

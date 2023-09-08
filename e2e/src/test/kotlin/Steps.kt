@@ -1,5 +1,4 @@
 import com.github.tomakehurst.wiremock.client.WireMock.*
-import com.github.tomakehurst.wiremock.extension.Parameters
 import com.thoughtworks.gauge.Step
 import io.github.nilwurtz.GraphqlBodyMatcher
 import java.net.URI
@@ -12,11 +11,11 @@ class Steps {
     fun setupGraphqlJsonStub(json: String) {
         // for remote
         Datastore.client()?.register(post(urlEqualTo("/graphql"))
-            .andMatching(GraphqlBodyMatcher.extensionName, Parameters.one("expectedJson", json)).willReturn(ok()))
+            .andMatching(GraphqlBodyMatcher.extensionName, GraphqlBodyMatcher.withRequest(json)).willReturn(ok()))
         // for local
         Datastore.localServer()
             ?.stubFor(post(urlEqualTo("/graphql"))
-                .andMatching(GraphqlBodyMatcher.extensionName, Parameters.one("expectedJson", json)).willReturn(ok()))
+                .andMatching(GraphqlBodyMatcher.extensionName, GraphqlBodyMatcher.withRequest(json)).willReturn(ok()))
     }
 
     @Step("Register a stub to return 200 upon receiving the query<query>")
