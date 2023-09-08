@@ -36,7 +36,7 @@
         <gpg.skip>true</gpg.skip>
         <kotlin.version>1.9.10</kotlin.version>
         <junit.version>5.10.0</junit.version>
-        <wiremock.version>3.0.0</wiremock.version>
+        <wiremock.version>3.0.3</wiremock.version>
         <graphql-java.version>21.0</graphql-java.version>
         <json.version>20230618</json.version>
         <mockk.version>1.13.7</mockk.version>
