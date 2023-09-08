@@ -5,7 +5,6 @@ import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
 import com.thoughtworks.gauge.AfterSuite
 import com.thoughtworks.gauge.BeforeScenario
 import com.thoughtworks.gauge.BeforeSuite
-import com.thoughtworks.gauge.datastore.SuiteDataStore
 import io.github.nilwurtz.GraphqlBodyMatcher
 
 class ExecutionHooks {
@@ -43,23 +42,5 @@ class ExecutionHooks {
             it.resetMappings()
             it.resetRequests()
         }
-    }
-}
-
-object Datastore {
-    fun localServer(): WireMockServer? {
-        return SuiteDataStore.get("localServer") as WireMockServer?
-    }
-
-    fun localServer(client: WireMockServer) {
-        SuiteDataStore.put("localServer", client)
-    }
-
-    fun client(): WireMock? {
-        return SuiteDataStore.get("client") as WireMock?
-    }
-
-    fun client(client: WireMock) {
-        SuiteDataStore.put("client", client)
     }
 }

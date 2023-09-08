@@ -1,78 +1,78 @@
-# Graphql Request のクエリを比較する
+# Comparing Graphql Request Queries
 
-## 完全一致するJsonの場合、マッチする
+## When JSON perfectly matches, it should match
 tags: remote
-* json<file:./fixtures/exact-match/setup.json>を受け取って200を返すスタブを登録する
-* URL"/graphql"にボディ<file:./fixtures/exact-match/request.json>で、POSTリクエストを送る
-* レスポンスステータスコードが"200"である
+* Register a stub to return 200 upon receiving json <file:./fixtures/exact-match/setup.json>
+* Send a POST request to URL "/graphql" with body <file:./fixtures/exact-match/request.json>
+* The response status code should be "200"
 
-## 完全一致しないJsonの場合、マッチしない
+## When JSON does not perfectly match, it should not match
 tags: remote
-* json<file:./fixtures/not-match/setup.json>を受け取って200を返すスタブを登録する
-* URL"/graphql"にボディ<file:./fixtures/not-match/request.json>で、POSTリクエストを送る
-* レスポンスステータスコードが"404"である
+* Register a stub to return 200 upon receiving json <file:./fixtures/not-match/setup.json>
+* Send a POST request to URL "/graphql" with body <file:./fixtures/not-match/request.json>
+* The response status code should be "404"
 
-## 順番が異なるJsonの場合、マッチする
+## When JSON has different order, it should match
 tags: remote
-* json<file:./fixtures/order-match/setup.json>を受け取って200を返すスタブを登録する
-* URL"/graphql"にボディ<file:./fixtures/order-match/request.json>で、POSTリクエストを送る
-* レスポンスステータスコードが"200"である
+* Register a stub to return 200 upon receiving json <file:./fixtures/order-match/setup.json>
+* Send a POST request to URL "/graphql" with body <file:./fixtures/order-match/request.json>
+* The response status code should be "200"
 
-## エイリアスを使用したJsonの場合、マッチする
+## When JSON uses aliases, it should match
 tags: remote
-* json<file:./fixtures/alias-match/setup.json>を受け取って200を返すスタブを登録する
-* URL"/graphql"にボディ<file:./fixtures/alias-match/request.json>で、POSTリクエストを送る
-* レスポンスステータスコードが"200"である
+* Register a stub to return 200 upon receiving json <file:./fixtures/alias-match/setup.json>
+* Send a POST request to URL "/graphql" with body <file:./fixtures/alias-match/request.json>
+* The response status code should be "200"
 
-## 異なるエイリアスを使用したJsonの場合、マッチしない
+## When JSON uses different aliases, it should not match
 tags: remote
-* json<file:./fixtures/alias-not-match/setup.json>を受け取って200を返すスタブを登録する
-* URL"/graphql"にボディ<file:./fixtures/alias-not-match/request.json>で、POSTリクエストを送る
-* レスポンスステータスコードが"404"である
+* Register a stub to return 200 upon receiving json <file:./fixtures/alias-not-match/setup.json>
+* Send a POST request to URL "/graphql" with body <file:./fixtures/alias-not-match/request.json>
+* The response status code should be "404"
 
-## 同じフラグメントを使用したJsonの場合、マッチする
+## When JSON uses the same fragments, it should match
 tags: remote
-* json<file:./fixtures/fragment-match/setup.json>を受け取って200を返すスタブを登録する
-* URL"/graphql"にボディ<file:./fixtures/fragment-match/request.json>で、POSTリクエストを送る
-* レスポンスステータスコードが"200"である
+* Register a stub to return 200 upon receiving json <file:./fixtures/fragment-match/setup.json>
+* Send a POST request to URL "/graphql" with body <file:./fixtures/fragment-match/request.json>
+* The response status code should be "200"
 
-## 異なるフラグメント名で同じセットを使用したJsonの場合、マッチする
+## When JSON uses different fragment names for the same set, it should match
 tags: remote
-* json<file:./fixtures/fragment-name-match/setup.json>を受け取って200を返すスタブを登録する
-* URL"/graphql"にボディ<file:./fixtures/fragment-name-match/request.json>で、POSTリクエストを送る
-* レスポンスステータスコードが"200"である
+* Register a stub to return 200 upon receiving json <file:./fixtures/fragment-name-match/setup.json>
+* Send a POST request to URL "/graphql" with body <file:./fixtures/fragment-name-match/request.json>
+* The response status code should be "200"
 
-## 同じフラグメント名で違うセットを使用したJsonの場合、マッチしない
+## When JSON uses the same fragment names for different sets, it should not match
 tags: remote
-* json<file:./fixtures/fragment-set-not-match/setup.json>を受け取って200を返すスタブを登録する
-* URL"/graphql"にボディ<file:./fixtures/fragment-set-not-match/request.json>で、POSTリクエストを送る
-* レスポンスステータスコードが"404"である
+* Register a stub to return 200 upon receiving json <file:./fixtures/fragment-set-not-match/setup.json>
+* Send a POST request to URL "/graphql" with body <file:./fixtures/fragment-set-not-match/request.json>
+* The response status code should be "404"
 
-## 複数のフラグメントを含むクエリがマッチする
+## When the query contains multiple fragments, it should match
 tags: remote
-* json<file:./fixtures/multiple-fragments-match/setup.json>を受け取って200を返すスタブを登録する
-* URL"/graphql"にボディ<file:./fixtures/multiple-fragments-match/request.json>で、POSTリクエストを送る
-* レスポンスステータスコードが"200"である
+* Register a stub to return 200 upon receiving json <file:./fixtures/multiple-fragments-match/setup.json>
+* Send a POST request to URL "/graphql" with body <file:./fixtures/multiple-fragments-match/request.json>
+* The response status code should be "200"
 
-## 複数のフラグメントを含むクエリでSetが違う場合マッチしない
+## When the query contains different sets with multiple fragments, it should not match
 tags: remote
-* json<file:./fixtures/multiple-fragments-not-match/setup.json>を受け取って200を返すスタブを登録する
-* URL"/graphql"にボディ<file:./fixtures/multiple-fragments-not-match/request.json>で、POSTリクエストを送る
-* レスポンスステータスコードが"404"である
+* Register a stub to return 200 upon receiving json <file:./fixtures/multiple-fragments-not-match/setup.json>
+* Send a POST request to URL "/graphql" with body <file:./fixtures/multiple-fragments-not-match/request.json>
+* The response status code should be "404"
 
-## 同じ引数を持つJsonの場合、マッチする
+## When JSON has the same arguments, it should match
 tags: remote
-* json<file:./fixtures/argument-match/setup.json>を受け取って200を返すスタブを登録する
-* URL"/graphql"にボディ<file:./fixtures/argument-match/request.json>で、POSTリクエストを送る
-* レスポンスステータスコードが"200"である
+* Register a stub to return 200 upon receiving json <file:./fixtures/argument-match/setup.json>
+* Send a POST request to URL "/graphql" with body <file:./fixtures/argument-match/request.json>
+* The response status code should be "200"
 
-## 異なる引数を持つJsonの場合、マッチしない
+## When JSON has different arguments, it should not match
 tags: remote
-* json<file:./fixtures/argument-not-match/setup.json>を受け取って200を返すスタブを登録する
-* URL"/graphql"にボディ<file:./fixtures/argument-not-match/request.json>で、POSTリクエストを送る
-* レスポンスステータスコードが"404"である
+* Register a stub to return 200 upon receiving json <file:./fixtures/argument-not-match/setup.json>
+* Send a POST request to URL "/graphql" with body <file:./fixtures/argument-not-match/request.json>
+* The response status code should be "404"
 
-## queryを指定して、マッチする
-* クエリ<file:./fixtures/query-match/setup-query.graphql>を受け取って200を返すスタブを登録する
-* URL"/graphql"にボディ<file:./fixtures/query-match/request.json>で、POSTリクエストを送る
-* レスポンスステータスコードが"200"である
+## Specifying the query should match
+* Register a stub to return 200 upon receiving the query<file:./fixtures/query-match/setup-query.graphql>
+* Send a POST request to URL "/graphql" with body <file:./fixtures/query-match/request.json>
+* The response status code should be "200"

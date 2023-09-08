@@ -1,30 +1,30 @@
-# Graphql Request のクエリと変数を比較する
+# Comparing Graphql Request queries and variables
 
-## 変数が完全に一致する場合、マッチする
+## When the variables match exactly, it matches
 tags: remote
-* json<file:./fixtures/variables-match/setup.json>を受け取って200を返すスタブを登録する
-* URL"/graphql"にボディ<file:./fixtures/variables-match/request.json>で、POSTリクエストを送る
-* レスポンスステータスコードが"200"である
+* Register a stub to return 200 upon receiving json <file:./fixtures/variables-match/setup.json>
+* Send a POST request to URL "/graphql" with body <file:./fixtures/variables-match/request.json>
+* The response status code should be "200"
 
-## 変数が完全に一致しない場合、マッチしない
+## When the variables do not match exactly, it does not match
 tags: remote
-* json<file:./fixtures/variables-not-match/setup.json>を受け取って200を返すスタブを登録する
-* URL"/graphql"にボディ<file:./fixtures/variables-not-match/request.json>で、POSTリクエストを送る
-* レスポンスステータスコードが"404"である
+* Register a stub to return 200 upon receiving json <file:./fixtures/variables-not-match/setup.json>
+* Send a POST request to URL "/graphql" with body <file:./fixtures/variables-not-match/request.json>
+* The response status code should be "404"
 
-## 変数のプロパティ順が異なっても構造が一致する場合、マッチする
+## When the variable properties order differs but the structure matches, it matches
 tags: remote
-* json<file:./fixtures/variables-complex-match/setup.json>を受け取って200を返すスタブを登録する
-* URL"/graphql"にボディ<file:./fixtures/variables-complex-match/request.json>で、POSTリクエストを送る
-* レスポンスステータスコードが"200"である
+* Register a stub to return 200 upon receiving json <file:./fixtures/variables-complex-match/setup.json>
+* Send a POST request to URL "/graphql" with body <file:./fixtures/variables-complex-match/request.json>
+* The response status code should be "200"
 
-## 変数の配列の順が異なる場合、マッチしない
+## When the order of elements in the variable array differs, it does not match
 tags: remote
-* json<file:./fixtures/variables-array-order-not-match/setup.json>を受け取って200を返すスタブを登録する
-* URL"/graphql"にボディ<file:./fixtures/variables-array-order-not-match/request.json>で、POSTリクエストを送る
-* レスポンスステータスコードが"404"である
+* Register a stub to return 200 upon receiving json <file:./fixtures/variables-array-order-not-match/setup.json>
+* Send a POST request to URL "/graphql" with body <file:./fixtures/variables-array-order-not-match/request.json>
+* The response status code should be "404"
 
-## クエリと変数が一致する場合、マッチする
-* クエリ<file:./fixtures/query-variables-match/setup-query.graphql>と変数<file:./fixtures/query-variables-match/setup-variables.json>を受け取って200を返すスタブを登録する
-* URL"/graphql"にボディ<file:./fixtures/query-variables-match/request.json>で、POSTリクエストを送る
-* レスポンスステータスコードが"200"である
+## When the query and variables match, it matches
+* Register a stub to return 200 upon receiving the query<file:./fixtures/query-variables-match/setup-query.graphql> and variables<file:./fixtures/query-variables-match/setup-variables.json>
+* Send a POST request to URL "/graphql" with body <file:./fixtures/query-variables-match/request.json>
+* The response status code should be "200"

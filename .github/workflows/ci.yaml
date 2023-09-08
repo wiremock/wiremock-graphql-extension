@@ -25,7 +25,7 @@ jobs:
 
       - uses: getgauge/setup-gauge@master
         with:
-          gauge-version: '1.4.3'
+          gauge-version: '1.5.0'
           gauge-plugins: java, html-report
 
       - name: Run unit test and install
@@ -42,6 +42,6 @@ jobs:
 
       - name: Run remote e2e
         run: |-
-          sed -i 's/rest.baseUrl=http:\/\/localhost:8080/rest.baseUrl=http:\/\/localhost:8888/' src/test/resources/playtest-gauge-rest.default.properties
+          sed -i 's/baseUrl=http:\/\/localhost:8080/baseUrl=http:\/\/localhost:8888/' src/test/resources/config.properties
           make run TAGS='!unimplemented,remote'
         working-directory: e2e
