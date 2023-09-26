@@ -30,7 +30,7 @@ repositories {
 }
 
 dependencies {
-    testImplementation 'io.github.nilwurtz:wiremock-graphql-extension:0.6.2'
+    testImplementation 'io.github.nilwurtz:wiremock-graphql-extension:0.7.0'
 }
 ```
 
@@ -40,7 +40,7 @@ dependencies {
 <dependency>
     <groupId>io.github.nilwurtz</groupId>
     <artifactId>wiremock-graphql-extension</artifactId>
-    <version>0.6.2</version>
+    <version>0.7.0</version>
     <scope>test</scope>
 </dependency>
 ```
@@ -103,7 +103,7 @@ Please download `wiremock-graphql-extension-x.y.z-jar-with-dependencies.jar` fro
 docker run -it --rm \
       -p 8080:8080 \
       --name wiremock \
-      -v /path/to/wiremock-graphql-extension-0.6.2-jar-with-dependencies.jar:/var/wiremock/extensions/wiremock-graphql-extension-0.6.2-jar-with-dependencies.jar \
+      -v /path/to/wiremock-graphql-extension-0.7.0-jar-with-dependencies.jar:/var/wiremock/extensions/wiremock-graphql-extension-0.7.0-jar-with-dependencies.jar \
       wiremock/wiremock \
       --extensions io.github.nilwurtz.GraphqlBodyMatcher
 ```
@@ -111,7 +111,7 @@ docker run -it --rm \
 #### When building with `docker build`:
 ```dockerfile
 FROM wiremock/wiremock:latest
-COPY ./wiremock-graphql-extension-0.6.2-jar-with-dependencies.jar /var/wiremock/extensions/wiremock-graphql-extension-0.6.2-jar-with-dependencies.jar
+COPY ./wiremock-graphql-extension-0.7.0-jar-with-dependencies.jar /var/wiremock/extensions/wiremock-graphql-extension-0.7.0-jar-with-dependencies.jar
 CMD ["--extensions", "io.github.nilwurtz.GraphqlBodyMatcher"]
 ```
 

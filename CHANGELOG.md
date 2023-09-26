@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
+## [0.7.0] - 2023-09-27
+### Changed
+- Throws `InvalidQueryException` and `InvalidJsonException` when `withRequest` is called.
+- When `match` method is called, it will not throw any exception if the request is invalid.
+
 ## [0.6.2] - 2023-09-08
 ### Added
 - Added `withRequest` method which can used easily when using remote wiremock server.

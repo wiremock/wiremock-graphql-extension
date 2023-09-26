@@ -4,6 +4,7 @@ import com.github.tomakehurst.wiremock.extension.Parameters
 import com.github.tomakehurst.wiremock.http.Request
 import com.github.tomakehurst.wiremock.matching.MatchResult
 import com.github.tomakehurst.wiremock.matching.RequestMatcherExtension
+import com.github.tomakehurst.wiremock.stubbing.SubEvent
 import graphql.language.Document
 import graphql.parser.Parser
 import io.github.nilwurtz.exceptions.InvalidJsonException
@@ -57,15 +58,19 @@ class GraphqlBodyMatcher() : RequestMatcherExtension() {
         }
 
         /**
-        * Creates a Parameters instance containing the given raw JSON string expected in the GraphQL request.
-        *
-        * This method is used to set up JSON expected in remote requests. The expectedJson parameter should be a raw JSON string that encapsulates the expected query and optionally variables for the GraphQL request. This string is used to create a parameters object utilized internally in the GraphqlBodyMatcher.
-        *
-        * @param expectedJson A raw JSON string that contains the GraphQL query and optionally variables expected in the requests.
-        * @return A Parameters instance created based on the expected JSON string.
-        */
+         * Creates a Parameters instance containing the given raw JSON string expected in the GraphQL request.
+         *
+         * This method is used to set up JSON expected in remote requests. The expectedJson parameter should be a raw JSON string that encapsulates the expected query and optionally variables for the GraphQL request. This string is used to create a parameters object utilized internally in the GraphqlBodyMatcher.
+         *
+         * @param expectedJson A raw JSON string that contains the GraphQL query and optionally variables expected in the requests.
+         * @return A Parameters instance created based on the expected JSON string.
+         * @throws InvalidJsonException if the given JSON is malformed.
+         * @throws InvalidQueryException if the given query is invalid.
+         */
         fun withRequest(expectedJson: String): Parameters {
-           return Parameters.one(expectedJsonKey, expectedJson)
+            // check if the json and query is valid
+            expectedJson.toJSONObject().graphqlQueryDocument()
+            return Parameters.one(expectedJsonKey, expectedJson)
         }
     }
 
@@ -82,20 +87,9 @@ class GraphqlBodyMatcher() : RequestMatcherExtension() {
      * @throws InvalidQueryException if the given query inside the JSON is invalid.
      */
     private fun initExpectedRequestJson(expectedJson: String) {
-        try {
-            expectedRequestJson = JSONObject(expectedJson)
-            // Attempt to parse and normalize the query to check for validity
-            expectedRequestJson.getString("query").run {
-                Parser().parseDocument(this)
-            }
-        } catch (e: JSONException) {
-            throw InvalidJsonException("Failed to parse the provided JSON string: $expectedJson", e)
-        } catch (e: Exception) {
-            throw InvalidQueryException(
-                "Failed to parse the provided GraphQL query: ${expectedRequestJson.getString("query")}",
-                e
-            )
-        }
+        expectedRequestJson = expectedJson.toJSONObject()
+        // Attempt to parse and normalize the query to check for validity
+        expectedRequestJson.graphqlQueryDocument()
     }
 
     /**
@@ -107,24 +101,27 @@ class GraphqlBodyMatcher() : RequestMatcherExtension() {
      * @param parameters Additional parameters that may be used for matching.
      * @return [MatchResult.exactMatch] if the request query and variables match the expected query and variables,
      *         [MatchResult.noMatch] otherwise.
-     * @throws InvalidJsonException if the request JSON or the expected JSON is invalid.
-     * @throws InvalidQueryException if the request query or the expected query is invalid.
      */
     override fun match(request: Request, parameters: Parameters): MatchResult {
-        // for remote call
-        if (parameters.containsKey(expectedJsonKey)) {
-            expectedRequestJson = JSONObject(parameters.getString(expectedJsonKey))
-        }
-        val requestJson = JSONObject(request.bodyAsString)
+        try {
+            // for remote call
+            if (parameters.containsKey(expectedJsonKey)) {
+                expectedRequestJson = parameters.getString(expectedJsonKey).toJSONObject()
+            }
+            val requestJson = request.bodyAsString.toJSONObject()
 
-        val isQueryMatch =
-            requestJson.graphqlQueryDocument().normalize().toString() == expectedRequestJson.graphqlQueryDocument()
-                .normalize().toString()
-        val isVariablesMatch = requestJson.graphqlVariables().similar(expectedRequestJson.graphqlVariables())
+            val isQueryMatch =
+                requestJson.graphqlQueryDocument().normalize().toString() == expectedRequestJson.graphqlQueryDocument()
+                    .normalize().toString()
+            val isVariablesMatch = requestJson.graphqlVariables().similar(expectedRequestJson.graphqlVariables())
 
-        return when {
-            isQueryMatch && isVariablesMatch -> MatchResult.exactMatch()
-            else -> MatchResult.noMatch()
+            return when {
+                isQueryMatch && isVariablesMatch -> MatchResult.exactMatch()
+                else -> MatchResult.noMatch(SubEvent.info("Request query is not matched. Expected query: ${expectedRequestJson.getString("query")}"))
+            }
+        } catch (e: Exception) {
+            return MatchResult.noMatch(SubEvent.warning(e.message))
+
         }
     }
 
@@ -133,10 +130,22 @@ class GraphqlBodyMatcher() : RequestMatcherExtension() {
     }
 }
 
+private fun String.toJSONObject(): JSONObject {
+    try {
+        return JSONObject(this)
+    } catch (e: Exception) {
+        throw InvalidJsonException("Failed to parse the provided JSON string: $this", e)
+    }
+}
+
 private fun JSONObject.graphqlQueryDocument(): Document {
-    return this.optString("query")
-        .let { Parser().parseDocument(it) }
-        ?: throw InvalidQueryException("Invalid query")
+    try {
+        return this.optString("query")
+            .let { Parser().parseDocument(it) }
+            ?: throw InvalidQueryException("Invalid query")
+    } catch (e: Exception) {
+        throw InvalidQueryException("Failed to parse the provided GraphQL query: ${this.optString("query")}", e)
+    }
 }
 
 private fun JSONObject.graphqlVariables(): JSONObject {

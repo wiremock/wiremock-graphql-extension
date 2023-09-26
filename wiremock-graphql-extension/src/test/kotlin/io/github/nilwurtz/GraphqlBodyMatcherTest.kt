@@ -288,8 +288,8 @@ class GraphqlBodyMatcherTest {
     }
 
     @Nested
-    @DisplayName("test `withRemoteRequestJson`")
-    inner class WithRemoteRequestJson {
+    @DisplayName("test `withRequest`")
+    inner class WithRequestTest {
         @Test
         @DisplayName("returns Parameters with expectedJsonKey")
         fun testMatchedIdentical() {
@@ -303,6 +303,54 @@ class GraphqlBodyMatcherTest {
             val actual = GraphqlBodyMatcher.withRequest(json)
             assertTrue(actual.containsKey("expectedJson"))
             assertEquals(json, actual.getString("expectedJson"))
+        }
+
+        @Test
+        @DisplayName("Throws InvalidJsonException when json is empty")
+        fun testUnmatchedEmptyJson() {
+            val emptyJson = ""
+
+            assertThrows<InvalidJsonException> {
+                GraphqlBodyMatcher.withRequest(emptyJson)
+            }
+        }
+
+        @Test
+        @DisplayName("Throws InvalidJsonException when json is invalid")
+        fun testUnmatchedInvalidJson() {
+            val invalidJson = """
+            {
+                "query": "{ hero { name, age, height }"
+        """.trimIndent()
+
+            assertThrows<InvalidJsonException> {
+                GraphqlBodyMatcher.withRequest(invalidJson)
+            }
+        }
+
+        @Test
+        @DisplayName("Throws InvalidQueryException when query is invalid")
+        fun testUnmatchedInvalidQuery() {
+            // language=json
+            val invalidQueryJson = """
+            {
+                "query": "{ hero { name, age, height "
+            }
+        """.trimIndent()
+
+            assertThrows<InvalidQueryException> {
+                GraphqlBodyMatcher.withRequest(invalidQueryJson)
+            }
+        }
+
+        @Test
+        @DisplayName("Throws InvalidQueryException when query is empty")
+        fun testUnmatchedEmptyQuery() {
+            val json = """{ "query": "" }"""
+
+            assertThrows<InvalidQueryException> {
+                GraphqlBodyMatcher.withRequest(json)
+            }
         }
     }
 }
