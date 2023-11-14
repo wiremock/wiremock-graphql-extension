@@ -38,7 +38,7 @@
         <junit.version>5.10.0</junit.version>
         <wiremock.version>3.0.3</wiremock.version>
         <graphql-java.version>21.0</graphql-java.version>
-        <json.version>20230618</json.version>
+        <json.version>20231013</json.version>
         <mockk.version>1.13.7</mockk.version>
         <wiremock.testcontainers.version>1.0-alpha-7</wiremock.testcontainers.version>
         <testcontainers.version>1.19.0</testcontainers.version>
