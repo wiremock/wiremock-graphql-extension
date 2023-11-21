@@ -60,6 +60,10 @@ jobs:
           java-version: '17'
           distribution: 'corretto'
 
-      - name: Check example validity
+      - name: Check example validity kotlin
         run: mvn test
         working-directory: examples/testcontainers-kotlin
+
+      - name: Check example validity java
+        run: mvn test
+        working-directory: examples/testcontainers-java
