@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - 'e2e/**'
+      - 'examples/**'
       - 'wiremock-graphql-extension/**'
   workflow_dispatch:
 
@@ -45,3 +46,20 @@ jobs:
           sed -i 's/baseUrl=http:\/\/localhost:8080/baseUrl=http:\/\/localhost:8888/' src/test/resources/config.properties
           make run TAGS='!unimplemented,remote'
         working-directory: e2e
+
+  check-example-validity:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'corretto'
+
+      - name: Check example validity
+        run: mvn test
+        working-directory: examples/testcontainers-kotlin
