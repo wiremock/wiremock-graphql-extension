@@ -13,8 +13,7 @@ open class BaseContainerTest {
     @Container
     val wireMockContainer: WireMockContainer =
         WireMockContainer(
-            DockerImageName.parse(WireMockContainer.OFFICIAL_IMAGE_NAME + ":3.1.0")
-                .asCompatibleSubstituteFor("wiremock/wiremock")
+            DockerImageName.parse(WireMockContainer.OFFICIAL_IMAGE_NAME).withTag("3.1.0")
         )
             .withExposedPorts(8080)
             .withExtensions(

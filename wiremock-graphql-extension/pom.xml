@@ -6,7 +6,7 @@
 
     <artifactId>wiremock-graphql-extension</artifactId>
     <groupId>io.github.nilwurtz</groupId>
-    <version>0.7.0</version>
+    <version>0.7.1</version>
     <packaging>jar</packaging>
     <name>wiremock-graphql-extension</name>
     <description>A WireMock extension for handling GraphQL requests, allowing for easy mocking of GraphQL APIs in
@@ -33,17 +33,17 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <kotlin.code.style>official</kotlin.code.style>
         <kotlin.compiler.jvmTarget>11</kotlin.compiler.jvmTarget>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
         <gpg.skip>true</gpg.skip>
-        <kotlin.version>1.9.10</kotlin.version>
-        <junit.version>5.10.0</junit.version>
+        <kotlin.version>1.9.21</kotlin.version>
+        <junit.version>5.10.1</junit.version>
         <wiremock.version>3.0.3</wiremock.version>
         <graphql-java.version>21.0</graphql-java.version>
         <json.version>20231013</json.version>
-        <mockk.version>1.13.7</mockk.version>
-        <wiremock.testcontainers.version>1.0-alpha-7</wiremock.testcontainers.version>
-        <testcontainers.version>1.19.0</testcontainers.version>
+        <mockk.version>1.13.8</mockk.version>
+        <wiremock.testcontainers.version>1.0-alpha-13</wiremock.testcontainers.version>
+        <testcontainers.version>1.19.3</testcontainers.version>
     </properties>
 
     <repositories>
@@ -270,6 +270,7 @@
                                     <version>${project.version}</version>
                                     <classifier>jar-with-dependencies</classifier>
                                     <destFileName>wiremock-graphql-extension.jar</destFileName>
+                                    <overWrite>true</overWrite>
                                 </artifactItem>
                             </artifactItems>
                             <outputDirectory>${project.build.directory}/test-wiremock-extension</outputDirectory>

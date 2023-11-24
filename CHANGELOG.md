@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
+## [0.7.1] - 2023-11-25
+### Changed
+- Update dev dependencies (kotlin, mockk, junit, testcontainers)
+
+### Fixed
+- Improved handling of newline characters in JSON strings. Newline characters are now removed to prevent parsing errors (`JSONException: Unterminated string`) when processing JSON data. This change ensures that JSON strings with embedded newlines are handled correctly by the `String.toJSONObject()` method. ([#11](https://github.com/wiremock/wiremock-graphql-extension/issues/11))
+
 ## [0.7.0] - 2023-09-27
 ### Changed
 - Throws `InvalidQueryException` and `InvalidJsonException` when `withRequest` is called.

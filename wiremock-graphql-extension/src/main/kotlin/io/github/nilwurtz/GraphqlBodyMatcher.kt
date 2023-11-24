@@ -132,7 +132,7 @@ class GraphqlBodyMatcher() : RequestMatcherExtension() {
 
 private fun String.toJSONObject(): JSONObject {
     try {
-        return JSONObject(this)
+        return JSONObject(this.trim().replace("\n", ""))
     } catch (e: Exception) {
         throw InvalidJsonException("Failed to parse the provided JSON string: $this", e)
     }
