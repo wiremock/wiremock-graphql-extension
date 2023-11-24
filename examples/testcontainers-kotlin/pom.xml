@@ -20,7 +20,7 @@
         <wiremock.testcontainers.version>1.0-alpha-13</wiremock.testcontainers.version>
         <testcontainers.version>1.19.0</testcontainers.version>
         <kotlin.version>1.9.20</kotlin.version>
-        <extension.version>0.7.1</extension.version>
+        <extension.version>0.7.0</extension.version>
         <wiremock.version>3.3.1</wiremock.version>
         <junit.version>5.10.1</junit.version>
     </properties>
