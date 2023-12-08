@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 ### Changed
+- Implemented `graphql-java`'s `AstSorter` and `AstComparator` for GraphQL query normalization. This integration significantly aligns the supported GraphQL features of our extension with those of `graphql-java`. ([#14](https://github.com/wiremock/wiremock-graphql-extension/pull/14) from @kyle-winkelman)
 
 ## [0.7.1] - 2023-11-25
 ### Changed

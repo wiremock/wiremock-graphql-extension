@@ -11,7 +11,6 @@ import graphql.language.Document
 import graphql.parser.Parser
 import io.github.nilwurtz.exceptions.InvalidJsonException
 import io.github.nilwurtz.exceptions.InvalidQueryException
-import org.json.JSONException
 import org.json.JSONObject
 
 
@@ -114,12 +113,21 @@ class GraphqlBodyMatcher() : RequestMatcherExtension() {
 
             val isQueryMatch = AstComparator.isEqual(
                 requestJson.graphqlQueryDocument().sort(),
-                expectedRequestJson.graphqlQueryDocument().sort())
+                expectedRequestJson.graphqlQueryDocument().sort()
+            )
             val isVariablesMatch = requestJson.graphqlVariables().similar(expectedRequestJson.graphqlVariables())
 
             return when {
                 isQueryMatch && isVariablesMatch -> MatchResult.exactMatch()
-                else -> MatchResult.noMatch(SubEvent.info("Request query is not matched. Expected query: ${expectedRequestJson.getString("query")}"))
+                else -> MatchResult.noMatch(
+                    SubEvent.info(
+                        "Request query is not matched. Expected query: ${
+                            expectedRequestJson.getString(
+                                "query"
+                            )
+                        }"
+                    )
+                )
             }
         } catch (e: Exception) {
             return MatchResult.noMatch(SubEvent.warning(e.message))
