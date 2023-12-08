@@ -5,6 +5,8 @@ import com.github.tomakehurst.wiremock.http.Request
 import com.github.tomakehurst.wiremock.matching.MatchResult
 import com.github.tomakehurst.wiremock.matching.RequestMatcherExtension
 import com.github.tomakehurst.wiremock.stubbing.SubEvent
+import graphql.language.AstComparator
+import graphql.language.AstSorter
 import graphql.language.Document
 import graphql.parser.Parser
 import io.github.nilwurtz.exceptions.InvalidJsonException
@@ -110,9 +112,9 @@ class GraphqlBodyMatcher() : RequestMatcherExtension() {
             }
             val requestJson = request.bodyAsString.toJSONObject()
 
-            val isQueryMatch =
-                requestJson.graphqlQueryDocument().normalize().toString() == expectedRequestJson.graphqlQueryDocument()
-                    .normalize().toString()
+            val isQueryMatch = AstComparator.isEqual(
+                requestJson.graphqlQueryDocument().sort(),
+                expectedRequestJson.graphqlQueryDocument().sort())
             val isVariablesMatch = requestJson.graphqlVariables().similar(expectedRequestJson.graphqlVariables())
 
             return when {
@@ -152,6 +154,6 @@ private fun JSONObject.graphqlVariables(): JSONObject {
     return this.optJSONObject("variables") ?: JSONObject()
 }
 
-private fun Document.normalize(): Document {
-    return GraphqlQueryNormalizer.normalizeGraphqlDocument(this)
+private fun Document.sort(): Document {
+    return AstSorter().sort(this);
 }
