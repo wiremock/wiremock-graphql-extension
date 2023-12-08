@@ -10,12 +10,12 @@ GraphqlBodyMatcherは[WireMock](https://wiremock.org/)の拡張で、GraphQLの�
 
 ## Overview 📖
 
-- In addition to handling whitespaces, the extension sorts and normalizes queries. The GraphQL parsing is handled by `graphql-java`.
+- In addition to handling whitespaces, the extension sorts and normalizes queries. The GraphQL parsing and normalizing is handled by `graphql-java`.
 - Beyond just queries, it also compares variables. For the comparison of JSON variables, `org.json.JSONObject.similar` is employed. It's important to note that the order of arrays must match.
 
 For a comprehensive understanding of our matching logic and details on our match strategy, please refer to our [MatchStrategy documentation](./docs/MatchStrategy.md).
 
-- この拡張機能は、空白の取り扱いに加えて、クエリをソートし正規化します。GraphQLのパースには`graphql-java`を使用しています。
+- この拡張機能は、空白の取り扱いに加えて、クエリをソートし正規化します。GraphQLのパースおよび正規化には`graphql-java`を使用しています。
 - クエリだけでなく、変数も比較されます。変数のJSONの比較には`org.json.JSONObject.similar`を使用しますが、配列の順番も一致している必要があります。
 
 詳しいマッチングロジックなど関しては、[MatchStrategyのドキュメント](./docs/MatchStrategy.md)を参照してください。
@@ -30,7 +30,7 @@ repositories {
 }
 
 dependencies {
-    testImplementation 'io.github.nilwurtz:wiremock-graphql-extension:0.7.1'
+    testImplementation 'io.github.nilwurtz:wiremock-graphql-extension:0.8.0'
 }
 ```
 
@@ -40,7 +40,7 @@ dependencies {
 <dependency>
     <groupId>io.github.nilwurtz</groupId>
     <artifactId>wiremock-graphql-extension</artifactId>
-    <version>0.7.1</version>
+    <version>0.8.0</version>
     <scope>test</scope>
 </dependency>
 ```
@@ -103,7 +103,7 @@ Please download `wiremock-graphql-extension-x.y.z-jar-with-dependencies.jar` fro
 docker run -it --rm \
       -p 8080:8080 \
       --name wiremock \
-      -v /path/to/wiremock-graphql-extension-0.7.1-jar-with-dependencies.jar:/var/wiremock/extensions/wiremock-graphql-extension-0.7.1-jar-with-dependencies.jar \
+      -v /path/to/wiremock-graphql-extension-0.8.0-jar-with-dependencies.jar:/var/wiremock/extensions/wiremock-graphql-extension-0.8.0-jar-with-dependencies.jar \
       wiremock/wiremock \
       --extensions io.github.nilwurtz.GraphqlBodyMatcher
 ```
@@ -111,7 +111,7 @@ docker run -it --rm \
 #### When building with `docker build`:
 ```dockerfile
 FROM wiremock/wiremock:latest
-COPY ./wiremock-graphql-extension-0.7.1-jar-with-dependencies.jar /var/wiremock/extensions/wiremock-graphql-extension-0.7.1-jar-with-dependencies.jar
+COPY ./wiremock-graphql-extension-0.8.0-jar-with-dependencies.jar /var/wiremock/extensions/wiremock-graphql-extension-0.8.0-jar-with-dependencies.jar
 CMD ["--extensions", "io.github.nilwurtz.GraphqlBodyMatcher"]
 ```
 
@@ -135,9 +135,6 @@ fun registerGraphQLWiremock(json: String) {
     )
 }
 ```
-
-## Limitations 🚧
-This project currently focuses on supporting the fundamental parts of Queries. Some advanced features, such as mutations or aliases, are not yet fully supported. However, I aim to expand this scope over time.
 
 ## License 📜
 This project is licensed under the terms of the MIT License.
