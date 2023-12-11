@@ -46,7 +46,7 @@ public class TestSample {
                 WireMock.post(WireMock.urlEqualTo("/graphql"))
                         .andMatching(
                                 GraphqlBodyMatcher.extensionName,
-                                GraphqlBodyMatcher.Companion.withRequest(
+                                GraphqlBodyMatcher.withRequest(
                                         "{ \"query\": \"{ query { name id }}\" }"
                                 )
                         )
