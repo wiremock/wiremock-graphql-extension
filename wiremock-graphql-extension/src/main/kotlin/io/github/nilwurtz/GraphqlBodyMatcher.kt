@@ -32,6 +32,7 @@ class GraphqlBodyMatcher() : RequestMatcherExtension() {
          * @throws InvalidQueryException if the given query is invalid.
          */
         @Deprecated("This method will be deleted in a future release. Use withRequestJson instead.")
+        @JvmStatic
         fun withRequestQueryAndVariables(expectedQuery: String, expectedVariables: String? = null): GraphqlBodyMatcher {
             // Avoid to parse json here. It will be parsed in initExpectedRequestJson
             return GraphqlBodyMatcher().apply {
@@ -52,6 +53,7 @@ class GraphqlBodyMatcher() : RequestMatcherExtension() {
          * @throws InvalidJsonException if the given JSON is malformed.
          * @throws InvalidQueryException if the given query is invalid.
          */
+        @JvmStatic
         fun withRequestJson(expectedJson: String): GraphqlBodyMatcher {
             return GraphqlBodyMatcher().apply {
                 initExpectedRequestJson(expectedJson)
@@ -68,6 +70,7 @@ class GraphqlBodyMatcher() : RequestMatcherExtension() {
          * @throws InvalidJsonException if the given JSON is malformed.
          * @throws InvalidQueryException if the given query is invalid.
          */
+        @JvmStatic
         fun withRequest(expectedJson: String): Parameters {
             // check if the json and query is valid
             expectedJson.toJSONObject().graphqlQueryDocument()
