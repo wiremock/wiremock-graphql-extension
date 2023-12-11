@@ -33,6 +33,7 @@ class GraphqlBodyMatcher() : RequestMatcherExtension() {
          */
         @Deprecated("This method will be deleted in a future release. Use withRequestJson instead.")
         @JvmStatic
+        @JvmOverloads
         fun withRequestQueryAndVariables(expectedQuery: String, expectedVariables: String? = null): GraphqlBodyMatcher {
             // Avoid to parse json here. It will be parsed in initExpectedRequestJson
             return GraphqlBodyMatcher().apply {
