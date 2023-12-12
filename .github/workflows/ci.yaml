@@ -60,6 +60,10 @@ jobs:
           java-version: '17'
           distribution: 'corretto'
 
+      - name: Install to local repository
+        run: mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
+        working-directory: wiremock-graphql-extension
+
       - name: Check example validity kotlin
         run: mvn test
         working-directory: examples/testcontainers-kotlin
