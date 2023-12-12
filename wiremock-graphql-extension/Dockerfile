@@ -5,4 +5,3 @@ RUN mvn --batch-mode clean package -Dmaven.test.skip=true
 
 FROM wiremock/wiremock:latest AS wiremock
 COPY --from=build /app/target/wiremock-graphql-extension-*-jar-with-dependencies.jar /var/wiremock/extensions/wiremock-graphql-extension-jar-with-dependencies.jar
-CMD ["--extensions", "io.github.nilwurtz.GraphqlBodyMatcher"]
