@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 ### Changed
+
+## [0.8.1] - 2023-12-12
+### Changed
 - Added `@JvmStatic` annotation to `GraphqlBodyMatcher.Companion.withRequest` method to allow Java clients to use the method without `Companion`. ([#16](https://github.com/wiremock/wiremock-graphql-extension/pull/16) from @kyle-winkelman)
 
 ## [0.8.0] - 2023-12-08
