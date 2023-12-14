@@ -11,7 +11,7 @@ GraphqlBodyMatcherは[WireMock](https://wiremock.org/)の拡張で、GraphQLの�
 ## Overview 📖
 
 - In addition to handling whitespaces, the extension sorts and normalizes queries. The GraphQL parsing and normalizing is handled by `graphql-java`.
-- Beyond just queries, it also compares variables. For the comparison of JSON variables, `org.json.JSONObject.similar` is employed. It's important to note that the order of arrays must match.
+- Beyond just queries, it also compares variables. For the comparison of JSON variables, [EqualToJsonPattern](https://github.com/wiremock/wiremock/blob/3.3.1/src/main/java/com/github/tomakehurst/wiremock/matching/EqualToJsonPattern.java) is used. It's important to note that the order of arrays must match.
 
 For a comprehensive understanding of our matching logic and details on our match strategy, please refer to our [MatchStrategy documentation](./docs/MatchStrategy.md).
 
@@ -47,49 +47,69 @@ dependencies {
 
 
 ## Code Examples 💡
-Here are some code examples to get started:
-```kotlin
+Here are some code examples to get started.
+
+```java Java
+import com.github.tomakehurst.wiremock.client.WireMock;
+import io.github.nilwurtz.GraphqlBodyMatcher;
+
+import java.util.Map;
+
+var expectedQuery = """
+        query HeroInfo($id: Int) {
+            hero(id: $id) {
+                name
+            }
+        }
+        """;
+var expectedVariables = Map.of("id", 1);
+
+WireMock.stubFor(WireMock.post(WireMock.urlEqualTo("/graphql"))
+        .andMatching(GraphqlBodyMatcher.extensionName, GraphqlBodyMatcher.parameters(expectedQuery, expectedVariables))
+        .willReturn(WireMock.okJson("""
+                {
+                    "data": {
+                        "hero": {
+                            "name": "example"
+                        }
+                    }
+                }""")));
+```
+```kotlin Kotlin
+import com.github.tomakehurst.wiremock.client.WireMock
 import io.github.nilwurtz.GraphqlBodyMatcher
 
-WireMock.stubFor(
-    WireMock.post(WireMock.urlEqualTo("/graphql"))
-        .andMatching(GraphqlBodyMatcher.withRequestJson("""{"query": "{ hero { name }}"}"""))
-        .willReturn(WireMock.ok())
-)
-```
-
-The GraphQL query is expected inside the `"query"` key and variables within the `"variables"` key.
-
-```kotlin
 val expectedQuery = """
-    query HeroInfo($id: Int) {
-        hero(id: $id) {
+    query HeroInfo(${'$'}id: Int) {
+        hero(id: ${'$'}id) {
             name
         }
     }
 """.trimIndent()
-
-val expectedVariables = """
-    {
-        "id": 1
-    }
-""".trimIndent()
-
-val expectedJson = """
-    {
-        "query": "$expectedQuery",
-        "variables": $expectedVariables
-    }
-""".trimIndent()
+val expectedVariables = mapOf("id" to 1)
 
 WireMock.stubFor(
     WireMock.post(WireMock.urlEqualTo("/graphql"))
-        .andMatching(GraphqlBodyMatcher.withRequestJson(expectedJson))
-        .willReturn(WireMock.ok())
+        .andMatching(GraphqlBodyMatcher.extensionName, GraphqlBodyMatcher.parameters(expectedQuery, expectedVariables))
+        .willReturn(
+            WireMock.okJson("""
+                {
+                    "data": {
+                        "hero": {
+                            "name": "example"
+                        }
+                    }
+                }
+            """.trimIndent()
+            )
+        )
 )
 ```
 
-The `withRequestQueryAndVariables` method has been deprecated from version 0.6.0 onwards. Please use `withRequestJson` instead. 
+As we head towards a 1.0 release, we are focusing on supporting both the WireMock standalone and the WireMock Java API
+with the same paradigm. This is done through the use of `WireMock.requestMatching()` or `MappingBuilder#andMatching()`.
+To that end, the `withRequestQueryAndVariables` method has been deprecated from version 0.6.0 onwards and
+`withRequestJson` and `withRequest` methods have been deprecated from version 0.9.0 onwards.
 
 ## Running with a Remote Wiremock Server 🌍
 
@@ -112,27 +132,35 @@ docker run -it --rm \
 ```dockerfile
 FROM wiremock/wiremock:latest
 COPY ./wiremock-graphql-extension-0.8.1-jar-with-dependencies.jar /var/wiremock/extensions/wiremock-graphql-extension-0.8.1-jar-with-dependencies.jar
-CMD ["--extensions", "io.github.nilwurtz.GraphqlBodyMatcher"]
 ```
 
 ### Client-side (Test) Configuration
 
 NOTE: When using a Remote Wiremock Server, you're requested to manage everything within a single JSON format.
 
-```kotlin
+```java Java
+import com.github.tomakehurst.wiremock.client.WireMock;
+import io.github.nilwurtz.GraphqlBodyMatcher;
+
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
+
+public registerGraphQLWiremock(String query, String response) {
+    WireMock(8080).register(
+        post(urlPathEqualTo(endPoint))
+            .andMatching(GraphqlBodyMatcher.extensionName, GraphqlBodyMatcher.parameters(query))
+            .willReturn(okJson(response)));
+}
+```
+```kotlin Kotlin
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.*
 import io.github.nilwurtz.GraphqlBodyMatcher
 
-fun registerGraphQLWiremock(json: String) {
+fun registerGraphQLWiremock(query: String, response: String) {
     WireMock(8080).register(
         post(urlPathEqualTo(endPoint))
-            .andMatching(GraphqlBodyMatcher.extensionName, GraphqlBodyMatcher.withRequest(json))
-            .willReturn(
-                aResponse()
-                    .withStatus(200)
-            )
-    )
+            .andMatching(GraphqlBodyMatcher.extensionName, GraphqlBodyMatcher.parameters(query))
+            .willReturn(okJson(response)))
 }
 ```
 

@@ -1,24 +1,24 @@
 package io.github.nilwurtz
 
+import com.github.tomakehurst.wiremock.common.Json
+import com.github.tomakehurst.wiremock.common.JsonException
 import com.github.tomakehurst.wiremock.extension.Parameters
 import com.github.tomakehurst.wiremock.http.Request
+import com.github.tomakehurst.wiremock.matching.AbsentPattern
+import com.github.tomakehurst.wiremock.matching.EqualToJsonPattern
+import com.github.tomakehurst.wiremock.matching.EqualToPattern
 import com.github.tomakehurst.wiremock.matching.MatchResult
 import com.github.tomakehurst.wiremock.matching.RequestMatcherExtension
+import com.github.tomakehurst.wiremock.matching.StringValuePattern
 import com.github.tomakehurst.wiremock.stubbing.SubEvent
-import graphql.language.AstComparator
-import graphql.language.AstSorter
-import graphql.language.Document
+import graphql.parser.InvalidSyntaxException
 import graphql.parser.Parser
-import io.github.nilwurtz.exceptions.InvalidJsonException
-import io.github.nilwurtz.exceptions.InvalidQueryException
-import org.json.JSONObject
 
 
 class GraphqlBodyMatcher() : RequestMatcherExtension() {
 
     companion object {
         const val extensionName = "graphql-body-matcher"
-        private const val expectedJsonKey = "expectedJson"
 
         /**
          * Creates a new instance of [GraphqlBodyMatcher] with the given GraphQL query string and variables.
@@ -28,10 +28,10 @@ class GraphqlBodyMatcher() : RequestMatcherExtension() {
          * @param expectedQuery The GraphQL query string that the matcher expects in requests.
          * @param expectedVariables The variables associated with the GraphQL query as a JSON string.
          * @return A new [GraphqlBodyMatcher] instance with the given expected query and variables.
-         * @throws InvalidJsonException if the generated JSON is malformed.
-         * @throws InvalidQueryException if the given query is invalid.
+         * @throws JsonException if the generated JSON is malformed.
+         * @throws InvalidSyntaxException if the given query is invalid.
          */
-        @Deprecated("This method will be deleted in a future release. Use withRequestJson instead.")
+        @Deprecated("Use parameters instead. Along with Wiremock.requestMatching(String, Parameters) or MappingBuilder#andMatching(String, Parameters).")
         @JvmStatic
         @JvmOverloads
         fun withRequestQueryAndVariables(expectedQuery: String, expectedVariables: String? = null): GraphqlBodyMatcher {
@@ -39,7 +39,7 @@ class GraphqlBodyMatcher() : RequestMatcherExtension() {
             return GraphqlBodyMatcher().apply {
                 val variablesJsonOrEmptyString =
                     if (expectedVariables != null) ""","variables": $expectedVariables""" else ""
-                initExpectedRequestJson("""{"query": "$expectedQuery"$variablesJsonOrEmptyString}""")
+                initParameters(withRequest("""{"query": "$expectedQuery"$variablesJsonOrEmptyString}"""))
             }
         }
 
@@ -51,13 +51,14 @@ class GraphqlBodyMatcher() : RequestMatcherExtension() {
          *
          * @param expectedJson The raw JSON string containing the GraphQL query and optional variables that the matcher expects in requests.
          * @return A new [GraphqlBodyMatcher] instance with the given expected query and variables.
-         * @throws InvalidJsonException if the given JSON is malformed.
-         * @throws InvalidQueryException if the given query is invalid.
+         * @throws JsonException if the given JSON is malformed.
+         * @throws InvalidSyntaxException if the given query is invalid.
          */
+        @Deprecated("Use parameters instead. Along with Wiremock.requestMatching(String, Parameters) or MappingBuilder#andMatching(String, Parameters).")
         @JvmStatic
         fun withRequestJson(expectedJson: String): GraphqlBodyMatcher {
             return GraphqlBodyMatcher().apply {
-                initExpectedRequestJson(expectedJson)
+                initParameters(withRequest(expectedJson))
             }
         }
 
@@ -68,39 +69,56 @@ class GraphqlBodyMatcher() : RequestMatcherExtension() {
          *
          * @param expectedJson A raw JSON string that contains the GraphQL query and optionally variables expected in the requests.
          * @return A Parameters instance created based on the expected JSON string.
-         * @throws InvalidJsonException if the given JSON is malformed.
-         * @throws InvalidQueryException if the given query is invalid.
+         * @throws JsonException if the given JSON is malformed.
+         * @throws InvalidSyntaxException if the given query is invalid.
          */
+        @Deprecated("Use parameters instead.")
         @JvmStatic
         fun withRequest(expectedJson: String): Parameters {
-            // check if the json and query is valid
-            expectedJson.toJSONObject().graphqlQueryDocument()
-            return Parameters.one(expectedJsonKey, expectedJson)
+            val expectedJsonObject = Json.read(expectedJson.replace("\n", ""), Map::class.java)
+            return parameters(
+                expectedJsonObject["query"] as String,
+                expectedJsonObject["variables"] as Map<String, Any>?,
+                expectedJsonObject["operationName"] as String?)
+        }
+
+        /**
+         * Creates a Parameters instance containing the query and optionally the variables and operationName.
+         *
+         * @param query A GraphQL query string.
+         * @param variables An optional map of variables used in the GraphQL query.
+         * @param operationName The optional name of the operation in the GraphQL query.
+         * @return A Parameters instance containing the query and optionally the variables and operationName.
+         * @throws InvalidSyntaxException if the given query is invalid.
+         * @see <a href="https://graphql.org/learn/queries/">GraphQL Queries and Mutations</a>
+         * @see <a href="https://graphql.org/learn/queries/#variables">GraphQL Variables</a>
+         * @see <a href="https://graphql.org/learn/queries/#operationName">GraphQL Operation Name</a>
+         */
+        @JvmStatic
+        @JvmOverloads
+        fun parameters(query: String, variables: Map<String, Any>? = null, operationName: String? = null): Parameters {
+            Parser().parseDocument(query)
+            val parameters = Parameters.one("query", query)
+            if (variables != null) {
+                parameters["variables"] = variables
+            }
+            if (operationName != null) {
+                parameters["operationName"] = operationName
+            }
+            return parameters;
         }
     }
 
-    private lateinit var expectedRequestJson: JSONObject
+    private lateinit var parameters: Parameters
 
-    /**
-     * Initializes the expected request JSON object from the given raw JSON string containing a
-     * GraphQL query and optional variables. The JSON is expected to have a "query" field with the query string
-     * and an optional "variables" field containing the variables.
-     * The query is parsed and normalized before being used for matching.
-     *
-     * @param expectedJson The raw JSON string containing the GraphQL query and optional variables that the matcher expects in requests.
-     * @throws InvalidJsonException if the given JSON is malformed.
-     * @throws InvalidQueryException if the given query inside the JSON is invalid.
-     */
-    private fun initExpectedRequestJson(expectedJson: String) {
-        expectedRequestJson = expectedJson.toJSONObject()
-        // Attempt to parse and normalize the query to check for validity
-        expectedRequestJson.graphqlQueryDocument()
+    private fun initParameters(parameters: Parameters) {
+        this.parameters = parameters
     }
 
     /**
-     * Compares the given [Request] and its GraphQL query and variables against the expected query and variables to determine
-     * if they match. If both queries and variables are semantically equal after normalization, it returns
-     * an exact match result; otherwise, it returns a no match result.
+     * Compares the given [Request] against the expected GraphQL query, variables, and operationName to determine if
+     * they match. If query, variables, and operationName are semantically equal, it returns an exact match result;
+     * otherwise, it returns a no match result.
      *
      * @param request The incoming request to match against the expected query and variables.
      * @param parameters Additional parameters that may be used for matching.
@@ -109,33 +127,42 @@ class GraphqlBodyMatcher() : RequestMatcherExtension() {
      */
     override fun match(request: Request, parameters: Parameters): MatchResult {
         try {
-            // for remote call
-            if (parameters.containsKey(expectedJsonKey)) {
-                expectedRequestJson = parameters.getString(expectedJsonKey).toJSONObject()
+            // for local call
+            if (parameters.isEmpty()) {
+                parameters.putAll(this.parameters)
             }
-            val requestJson = request.bodyAsString.toJSONObject()
+            val expectedQuery = parameters.getString("query")
+            val expectedVariables = parameters["variables"]?.writeJson()
+            val expectedOperationName = parameters.getString("operationName", null)
 
-            val isQueryMatch = AstComparator.isEqual(
-                requestJson.graphqlQueryDocument().sort(),
-                expectedRequestJson.graphqlQueryDocument().sort()
+            val requestJson = Json.read(request.bodyAsString, Map::class.java)
+            val requestQuery = requestJson["query"] as String
+            val requestVariables = requestJson["variables"]?.writeJson()
+            val requestOperationName = requestJson["operationName"] as String?
+
+            return MatchResult.aggregate(
+                EqualToGraphqlQueryPattern(expectedQuery).match(requestQuery),
+                variablesPattern(expectedVariables).match(requestVariables),
+                operationNamePattern(expectedOperationName).match(requestOperationName)
             )
-            val isVariablesMatch = requestJson.graphqlVariables().similar(expectedRequestJson.graphqlVariables())
-
-            return when {
-                isQueryMatch && isVariablesMatch -> MatchResult.exactMatch()
-                else -> MatchResult.noMatch(
-                    SubEvent.info(
-                        "Request query is not matched. Expected query: ${
-                            expectedRequestJson.getString(
-                                "query"
-                            )
-                        }"
-                    )
-                )
-            }
         } catch (e: Exception) {
             return MatchResult.noMatch(SubEvent.warning(e.message))
+        }
+    }
 
+    private fun variablesPattern(expectedVariables: String?) : StringValuePattern {
+        return if (expectedVariables == null) {
+            AbsentPattern.ABSENT
+        } else {
+            EqualToJsonPattern(expectedVariables, false, false)
+        }
+    }
+
+    private fun operationNamePattern(expectedOperationName: String?) : StringValuePattern {
+        return if (expectedOperationName == null) {
+            AbsentPattern.ABSENT
+        } else {
+            EqualToPattern(expectedOperationName)
         }
     }
 
@@ -144,28 +171,6 @@ class GraphqlBodyMatcher() : RequestMatcherExtension() {
     }
 }
 
-private fun String.toJSONObject(): JSONObject {
-    try {
-        return JSONObject(this.trim().replace("\n", ""))
-    } catch (e: Exception) {
-        throw InvalidJsonException("Failed to parse the provided JSON string: $this", e)
-    }
-}
-
-private fun JSONObject.graphqlQueryDocument(): Document {
-    try {
-        return this.optString("query")
-            .let { Parser().parseDocument(it) }
-            ?: throw InvalidQueryException("Invalid query")
-    } catch (e: Exception) {
-        throw InvalidQueryException("Failed to parse the provided GraphQL query: ${this.optString("query")}", e)
-    }
-}
-
-private fun JSONObject.graphqlVariables(): JSONObject {
-    return this.optJSONObject("variables") ?: JSONObject()
-}
-
-private fun Document.sort(): Document {
-    return AstSorter().sort(this);
+private fun Any.writeJson(): String {
+    return Json.write(this)
 }

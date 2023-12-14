@@ -1,12 +1,6 @@
-import com.fasterxml.jackson.databind.JsonNode
-import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder
 import com.github.tomakehurst.wiremock.client.WireMock
-import com.github.tomakehurst.wiremock.http.Body
 import io.github.nilwurtz.GraphqlBodyMatcher
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
@@ -18,6 +12,7 @@ import java.util.*
 
 @Testcontainers
 class TestSample {
+
     @Container
     val wireMockContainer: WireMockContainer =
         WireMockContainer(
@@ -36,21 +31,25 @@ class TestSample {
             )
 
     @Test
-    @DisplayName("Is container running")
     fun testRunning() {
         assertTrue { wireMockContainer.isRunning }
     }
 
     @Test
-    @DisplayName("Matches if GraphQL query is semantically equal to the request")
     fun testMatches() {
+        val query = """
+            query {
+              name
+              id
+            }
+        """.trimIndent()
         WireMock(wireMockContainer.port).register(
             WireMock.post(WireMock.urlEqualTo("/graphql"))
                 .andMatching(
                     GraphqlBodyMatcher.extensionName,
-                    GraphqlBodyMatcher.withRequest("""{"query": "query { name id }"}""")
+                    GraphqlBodyMatcher.parameters(query)
                 )
-                .willReturn(ResponseDefinitionBuilder.okForJson("""{"data": {"id": 1, "name": "test"}}"""))
+                .willReturn(WireMock.okJson("""{"data": {"id": 1, "name": "test"}}"""))
         )
 
 
@@ -61,19 +60,25 @@ class TestSample {
             .build().let { client.send(it, java.net.http.HttpResponse.BodyHandlers.ofString()) }
 
         assertEquals(200, request.statusCode())
-        assertEquals(""""{\"data\": {\"id\": 1, \"name\": \"test\"}}"""", request.body())
+        assertEquals("""{"data": {"id": 1, "name": "test"}}""", request.body())
     }
 
     @Test
-    @DisplayName("Matches if GraphQL query is semantically equal to the request using variables")
     fun testMatchesVariables() {
+        val query = """
+            query {
+              name
+              id
+            }
+        """.trimIndent()
+        val variables = mapOf("id" to 1)
         WireMock(wireMockContainer.port).register(
             WireMock.post(WireMock.urlEqualTo("/graphql"))
                 .andMatching(
                     GraphqlBodyMatcher.extensionName,
-                    GraphqlBodyMatcher.withRequest("""{"query": "query { name id }", "variables": {"id": 1}}""")
+                    GraphqlBodyMatcher.parameters(query, variables)
                 )
-                .willReturn(WireMock.aResponse().withStatus(200))
+                .willReturn(WireMock.okJson("""{"data": {"id": 1, "name": "test"}}"""))
         )
 
         val client = HttpClient.newHttpClient()
@@ -83,5 +88,35 @@ class TestSample {
             .build().let { client.send(it, java.net.http.HttpResponse.BodyHandlers.ofString()) }
 
         assertEquals(200, request.statusCode())
+        assertEquals("""{"data": {"id": 1, "name": "test"}}""", request.body())
+    }
+
+    @Test
+    fun testMatchesVariablesAndOperationName() {
+        val query = """
+            query {
+              name
+              id
+            }
+        """.trimIndent()
+        val variables = mapOf("id" to 1)
+        val operationName = "operationName"
+        WireMock(wireMockContainer.port).register(
+            WireMock.post(WireMock.urlEqualTo("/graphql"))
+                .andMatching(
+                    GraphqlBodyMatcher.extensionName,
+                    GraphqlBodyMatcher.parameters(query, variables, operationName)
+                )
+                .willReturn(WireMock.okJson("""{"data": {"id": 1, "name": "test"}}"""))
+        )
+
+        val client = HttpClient.newHttpClient()
+        val request = java.net.http.HttpRequest.newBuilder()
+            .uri(java.net.URI.create("${wireMockContainer.baseUrl}/graphql"))
+            .POST(java.net.http.HttpRequest.BodyPublishers.ofString("""{"query": "query { id name }", "variables": {"id": 1}, "operationName": "operationName"}"""))
+            .build().let { client.send(it, java.net.http.HttpResponse.BodyHandlers.ofString()) }
+
+        assertEquals(200, request.statusCode())
+        assertEquals("""{"data": {"id": 1, "name": "test"}}""", request.body())
     }
 }
