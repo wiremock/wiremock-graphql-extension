@@ -1,0 +1,19 @@
+{
+  "request": {
+    "urlPathPattern": "/graphql",
+    "method": "POST",
+    "customMatcher": {
+      "name": "graphql-body-matcher",
+      "parameters": {
+        "query": "{ query }",
+        "variables": {
+          "abc": 123
+        },
+        "operationName": "operationName"
+      }
+    }
+  },
+  "response": {
+    "status": 200
+  }
+}
