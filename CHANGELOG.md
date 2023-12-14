@@ -6,8 +6,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+- Added `operationName` parameter ([#18](https://github.com/wiremock/wiremock-graphql-extension/pull/18) from @kyle-winkelman)
+- Added `GraphqlBodyMatcher.parameters` method which can use create `Parameters` easily ([#18](https://github.com/wiremock/wiremock-graphql-extension/pull/18) from @kyle-winkelman)
 
 ### Changed
+- Remove `org.json:json` dependency in favor of reusing `com.github.tomakehurst.wiremock.common.Json` ([#18](https://github.com/wiremock/wiremock-graphql-extension/pull/18) from @kyle-winkelman)
 
 ## [0.8.1] - 2023-12-12
 ### Changed
