@@ -98,14 +98,10 @@ class GraphqlBodyMatcher() : RequestMatcherExtension() {
         @JvmOverloads
         fun parameters(query: String, variables: Map<String, Any>? = null, operationName: String? = null): Parameters {
             Parser().parseDocument(query)
-            val parameters = Parameters.one("query", query)
-            if (variables != null) {
-                parameters["variables"] = variables
+            return Parameters.one("query", query).apply {
+                variables?.let { put("variables", it) }
+                operationName?.let { put("operationName", it) }
             }
-            if (operationName != null) {
-                parameters["operationName"] = operationName
-            }
-            return parameters;
         }
     }
 

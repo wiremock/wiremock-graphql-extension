@@ -45,7 +45,8 @@ class GraphqlBodyMatcherTest {
 
         every { request.bodyAsString } returns json
 
-        val actual = GraphqlBodyMatcher().match(request, GraphqlBodyMatcher.parameters(QUERY, VARIABLES_MAP, OPERATION_NAME))
+        val actual =
+            GraphqlBodyMatcher().match(request, GraphqlBodyMatcher.parameters(QUERY, VARIABLES_MAP, OPERATION_NAME))
         assertTrue(actual.isExactMatch)
     }
 
@@ -62,9 +63,10 @@ class GraphqlBodyMatcherTest {
 
         every { request.bodyAsString } returns json
 
-        val actual = GraphqlBodyMatcher().match(request, GraphqlBodyMatcher.parameters(QUERY, VARIABLES_MAP, OPERATION_NAME))
+        val actual =
+            GraphqlBodyMatcher().match(request, GraphqlBodyMatcher.parameters(QUERY, VARIABLES_MAP, OPERATION_NAME))
         assertFalse(actual.isExactMatch)
-        assertEquals(1.0/3.0, actual.distance)
+        assertEquals(1.0 / 3.0, actual.distance)
     }
 
     @Test
@@ -80,9 +82,10 @@ class GraphqlBodyMatcherTest {
 
         every { request.bodyAsString } returns json
 
-        val actual = GraphqlBodyMatcher().match(request, GraphqlBodyMatcher.parameters(QUERY, VARIABLES_MAP, OPERATION_NAME))
+        val actual =
+            GraphqlBodyMatcher().match(request, GraphqlBodyMatcher.parameters(QUERY, VARIABLES_MAP, OPERATION_NAME))
         assertFalse(actual.isExactMatch)
-        assertEquals(1.0/3.0, actual.distance)
+        assertEquals(1.0 / 3.0, actual.distance)
     }
 
     @Test
@@ -98,9 +101,10 @@ class GraphqlBodyMatcherTest {
 
         every { request.bodyAsString } returns json
 
-        val actual = GraphqlBodyMatcher().match(request, GraphqlBodyMatcher.parameters(QUERY, VARIABLES_MAP, OPERATION_NAME))
+        val actual =
+            GraphqlBodyMatcher().match(request, GraphqlBodyMatcher.parameters(QUERY, VARIABLES_MAP, OPERATION_NAME))
         assertFalse(actual.isExactMatch)
-        assertEquals(1.0/3.0, actual.distance)
+        assertEquals(1.0 / 3.0, actual.distance)
     }
 
     @Test
@@ -133,7 +137,7 @@ class GraphqlBodyMatcherTest {
 
         val actual = GraphqlBodyMatcher().match(request, GraphqlBodyMatcher.parameters(QUERY, null, OPERATION_NAME))
         assertFalse(actual.isExactMatch)
-        assertEquals(1.0/3.0, actual.distance)
+        assertEquals(1.0 / 3.0, actual.distance)
     }
 
     @Test
@@ -151,7 +155,7 @@ class GraphqlBodyMatcherTest {
 
         val actual = GraphqlBodyMatcher().match(request, GraphqlBodyMatcher.parameters(QUERY, null, OPERATION_NAME))
         assertFalse(actual.isExactMatch)
-        assertEquals(1.0/3.0, actual.distance)
+        assertEquals(1.0 / 3.0, actual.distance)
     }
 
     @Test
@@ -168,7 +172,7 @@ class GraphqlBodyMatcherTest {
 
         val actual = GraphqlBodyMatcher().match(request, GraphqlBodyMatcher.parameters(QUERY, null, OPERATION_NAME))
         assertFalse(actual.isExactMatch)
-        assertEquals(1.0/3.0, actual.distance)
+        assertEquals(1.0 / 3.0, actual.distance)
     }
 
     @Test
@@ -201,7 +205,7 @@ class GraphqlBodyMatcherTest {
 
         val actual = GraphqlBodyMatcher().match(request, GraphqlBodyMatcher.parameters(QUERY, VARIABLES_MAP))
         assertFalse(actual.isExactMatch)
-        assertEquals(1.0/3.0, actual.distance)
+        assertEquals(1.0 / 3.0, actual.distance)
     }
 
     @Test
@@ -218,7 +222,7 @@ class GraphqlBodyMatcherTest {
 
         val actual = GraphqlBodyMatcher().match(request, GraphqlBodyMatcher.parameters(QUERY, VARIABLES_MAP))
         assertFalse(actual.isExactMatch)
-        assertEquals(1.0/3.0, actual.distance)
+        assertEquals(1.0 / 3.0, actual.distance)
     }
 
     @Test
@@ -236,7 +240,7 @@ class GraphqlBodyMatcherTest {
 
         val actual = GraphqlBodyMatcher().match(request, GraphqlBodyMatcher.parameters(QUERY, VARIABLES_MAP))
         assertFalse(actual.isExactMatch)
-        assertEquals(1.0/3.0, actual.distance)
+        assertEquals(1.0 / 3.0, actual.distance)
     }
 
     @Test
@@ -267,7 +271,7 @@ class GraphqlBodyMatcherTest {
 
         val actual = GraphqlBodyMatcher().match(request, GraphqlBodyMatcher.parameters(QUERY))
         assertFalse(actual.isExactMatch)
-        assertEquals(1.0/3.0, actual.distance)
+        assertEquals(1.0 / 3.0, actual.distance)
     }
 
     @Test
@@ -284,7 +288,7 @@ class GraphqlBodyMatcherTest {
 
         val actual = GraphqlBodyMatcher().match(request, GraphqlBodyMatcher.parameters(QUERY))
         assertFalse(actual.isExactMatch)
-        assertEquals(1.0/3.0, actual.distance)
+        assertEquals(1.0 / 3.0, actual.distance)
     }
 
     @Test
@@ -301,7 +305,7 @@ class GraphqlBodyMatcherTest {
 
         val actual = GraphqlBodyMatcher().match(request, GraphqlBodyMatcher.parameters(QUERY))
         assertFalse(actual.isExactMatch)
-        assertEquals(1.0/3.0, actual.distance)
+        assertEquals(1.0 / 3.0, actual.distance)
     }
 
     @Nested
