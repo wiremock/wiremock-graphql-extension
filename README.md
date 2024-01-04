@@ -2,11 +2,11 @@
 
 ⚠️ **IMPORTANT**: Starting from version 0.6, this extension requires WireMock 3.x. WireMock 2.x is no longer supported from this version onwards.
 
-*An extension for GraphQL testing with Wiremock*
+_An extension for GraphQL testing with Wiremock_
 
 GraphqlBodyMatcher is an extension for [WireMock](https://wiremock.org/) that allows for semantical verification of GraphQL requests.
 
-GraphqlBodyMatcherは[WireMock](https://wiremock.org/)の拡張で、GraphQLのリクエストが意味的に一致しているかを検証します。
+GraphqlBodyMatcher は[WireMock](https://wiremock.org/)の拡張で、GraphQL のリクエストが意味的に一致しているかを検証します。
 
 ## Overview 📖
 
@@ -15,13 +15,13 @@ GraphqlBodyMatcherは[WireMock](https://wiremock.org/)の拡張で、GraphQLの�
 
 For a comprehensive understanding of our matching logic and details on our match strategy, please refer to our [MatchStrategy documentation](./docs/MatchStrategy.md).
 
-- この拡張機能は、空白の取り扱いに加えて、クエリをソートし正規化します。GraphQLのパースおよび正規化には`graphql-java`を使用しています。
-- クエリだけでなく、変数も比較されます。変数のJSONの比較には`org.json.JSONObject.similar`を使用しますが、配列の順番も一致している必要があります。
+- この拡張機能は、空白の取り扱いに加えて、クエリをソートし正規化します。GraphQL のパースおよび正規化には`graphql-java`を使用しています。
+- クエリだけでなく、変数も比較されます。変数の JSON の比較には`org.json.JSONObject.similar`を使用しますが、配列の順番も一致している必要があります。
 
-詳しいマッチングロジックなど関しては、[MatchStrategyのドキュメント](./docs/MatchStrategy.md)を参照してください。
-
+詳しいマッチングロジックなど関しては、[MatchStrategy のドキュメント](./docs/MatchStrategy.md)を参照してください。
 
 ## Usage 🛠️
+
 ### For Gradle:
 
 ```groovy
@@ -30,7 +30,7 @@ repositories {
 }
 
 dependencies {
-    testImplementation 'io.github.nilwurtz:wiremock-graphql-extension:0.8.1'
+    testImplementation 'io.github.nilwurtz:wiremock-graphql-extension:0.8.2'
 }
 ```
 
@@ -40,13 +40,13 @@ dependencies {
 <dependency>
     <groupId>io.github.nilwurtz</groupId>
     <artifactId>wiremock-graphql-extension</artifactId>
-    <version>0.8.1</version>
+    <version>0.8.2</version>
     <scope>test</scope>
 </dependency>
 ```
 
-
 ## Code Examples 💡
+
 Here are some code examples to get started.
 
 ```java Java
@@ -75,6 +75,7 @@ WireMock.stubFor(WireMock.post(WireMock.urlEqualTo("/graphql"))
                     }
                 }""")));
 ```
+
 ```kotlin Kotlin
 import com.github.tomakehurst.wiremock.client.WireMock
 import io.github.nilwurtz.GraphqlBodyMatcher
@@ -118,20 +119,23 @@ If you are using Wiremock on a remote server such as Docker, please see the conf
 Please download `wiremock-graphql-extension-x.y.z-jar-with-dependencies.jar` from the Release section.
 
 ### Server Configuration
+
 #### When running with `docker run`:
+
 ```
 docker run -it --rm \
       -p 8080:8080 \
       --name wiremock \
-      -v /path/to/wiremock-graphql-extension-0.8.1-jar-with-dependencies.jar:/var/wiremock/extensions/wiremock-graphql-extension-0.8.1-jar-with-dependencies.jar \
+      -v /path/to/wiremock-graphql-extension-0.8.2-jar-with-dependencies.jar:/var/wiremock/extensions/wiremock-graphql-extension-0.8.2-jar-with-dependencies.jar \
       wiremock/wiremock \
       --extensions io.github.nilwurtz.GraphqlBodyMatcher
 ```
 
 #### When building with `docker build`:
+
 ```dockerfile
 FROM wiremock/wiremock:latest
-COPY ./wiremock-graphql-extension-0.8.1-jar-with-dependencies.jar /var/wiremock/extensions/wiremock-graphql-extension-0.8.1-jar-with-dependencies.jar
+COPY ./wiremock-graphql-extension-0.8.2-jar-with-dependencies.jar /var/wiremock/extensions/wiremock-graphql-extension-0.8.2-jar-with-dependencies.jar
 ```
 
 ### Client-side (Test) Configuration
@@ -151,6 +155,7 @@ public registerGraphQLWiremock(String query, String response) {
             .willReturn(okJson(response)));
 }
 ```
+
 ```kotlin Kotlin
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.*
@@ -165,7 +170,9 @@ fun registerGraphQLWiremock(query: String, response: String) {
 ```
 
 ## License 📜
+
 This project is licensed under the terms of the MIT License.
 
 ## Contributing 🤝
+
 Contributions are welcome! Feel free to open an issue or submit a pull request if you have any improvements or suggestions.
