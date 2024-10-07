@@ -11,6 +11,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
+- Update dependencies ([#24](https://github.com/wiremock/wiremock-graphql-extension/pull/24) from @bgalek)
+  - Update wiremock 3.0.3 -> 3.9.0
+  - Update graphql-java 21.0 -> 22.3
+  - Update mockk 1.13.8 -> 1.13.12
+  - Update testcontainers 1.19.3 -> 1.20.2
+  - Update junit 5.10.1 -> 5.11.1
+  - Update mockk 1.13.8 -> 1.13.12
+
 ## [0.8.2] - 2024-01-04
 
 ### Added
