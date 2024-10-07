@@ -41,7 +41,7 @@
         <wiremock.version>3.9.0</wiremock.version>
         <graphql-java.version>22.3</graphql-java.version>
         <mockk.version>1.13.12</mockk.version>
-        <wiremock.testcontainers.version>1.0-alpha-14</wiremock.testcontainers.version>
+        <wiremock.testcontainers.version>1.0-alpha-13</wiremock.testcontainers.version>
         <testcontainers.version>1.20.2</testcontainers.version>
     </properties>
 
