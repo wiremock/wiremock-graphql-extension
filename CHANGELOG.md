@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
+## [0.9.0] - 2024-10-08
+
+### Changed
+
 - Update dependencies ([#24](https://github.com/wiremock/wiremock-graphql-extension/pull/24) from @bgalek)
   - Update wiremock 3.0.3 -> 3.9.0
   - Update graphql-java 21.0 -> 22.3
