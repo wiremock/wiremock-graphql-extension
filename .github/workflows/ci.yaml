@@ -26,7 +26,7 @@ jobs:
 
       - uses: getgauge/setup-gauge@master
         with:
-          gauge-version: '1.5.0'
+          gauge-version: '1.6.9'
           gauge-plugins: java, html-report
 
       - name: Run unit test and install

@@ -13,7 +13,7 @@
         <kotlin.version>1.9.10</kotlin.version>
         <kotlin.compiler.jvmTarget>${java.version}</kotlin.compiler.jvmTarget>
         <gauge.java.version>0.10.2</gauge.java.version>
-        <gauge.maven.version>1.5.0</gauge.maven.version>
+        <gauge.maven.version>1.6.9</gauge.maven.version>
         <wiremock.version>3.0.3</wiremock.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
