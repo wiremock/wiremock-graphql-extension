@@ -1,4 +1,17 @@
-# Graphql Wiremock Extension - Graphql Body Matcher
+# WireMock GraphQL Extension
+
+---
+
+<table>
+<tr>
+<td>
+<img src="https://wiremock.org/images/wiremock-cloud/wiremock_cloud_logo.png" alt="WireMock Cloud Logo" height="20" align="left">
+<strong>WireMock OSS is supported by WireMock Cloud. Please consider trying it out for rapid GraphQL mocking with advanced features like dynamic state and federation.</strong>
+</td>
+</tr>
+</table>
+
+---
 
 ⚠️ **IMPORTANT**: Starting from version 0.6, this extension requires WireMock 3.x. WireMock 2.x is no longer supported from this version onwards.
 
